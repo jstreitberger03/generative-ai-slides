@@ -1,0 +1,137 @@
+\documentclass[11pt, aspectratio=169]{beamer}
+\usetheme{Modern}
+\title{Einführung in Maschinelles Lernen}
+\author{Julian Streitberger (IV/4 - FMA)}
+\date{\today}
+\begin{document}
+\maketitle
+
+\begin{frame}
+    \frametitle{Einführung: Maschinelles Lernen (ML)}
+    \begin{block}{Definition}
+        Algorithmen, die Muster in Daten erkennen und daraus Vorhersagen oder Entscheidungen ableiten, ohne explizit für jeden Einzelfall programmiert zu sein.
+    \end{block}
+    \vspace{0.5cm}
+    \begin{itemize}
+        \item \textbf{Kernkonzept:} Das System "lernt" aus Trainingsdaten.
+        \item \textbf{Relevanz:} Automatisierung komplexer Entscheidungsprozesse, die mit starren Regeln ("Wenn-Dann") schwer abzubilden sind.
+    \end{itemize}
+\end{frame}
+
+\begin{frame}
+    \frametitle{Kategorie 1: Überwachtes Lernen (Supervised Learning)}
+    \begin{columns}
+        \begin{column}{0.6\textwidth}
+            \begin{itemize}
+                \item \textbf{Funktionsweise:} Das Modell lernt anhand von gelabelten Beispielen (Input + korrektes Ergebnis).
+                \item \textbf{Ziel:} Vorhersage des Ergebnisses für neue, unbekannte Daten.
+            \end{itemize}
+        \end{column}
+        \begin{column}{0.35\textwidth}
+            \begin{alertblock}{Vergleich}
+                Lernen mit Musterlösungen (z.B. Referendarsausbildung).
+            \end{alertblock}
+        \end{column}
+    \end{columns}
+\end{frame}
+
+\begin{frame}
+    \frametitle{Methode A: k-nearest neighbors (k-NN)}
+    \begin{itemize}
+        \item \textbf{Detail:} Klassifikation eines Datenpunkts basierend auf der Mehrheit seiner \textit{k} ähnlichsten Nachbarn im Datenraum.
+        \item \textbf{Logik:} Gleich und Gleich gesellt sich gern.
+        \item \textbf{Beispiel:}  Wir wissen nicht, wie jemand gewählt hat, aber seine 5 engsten Freunde haben alle Partei A gewählt $\rightarrow$ hohe Wahrscheinlichkeit, dass er auch Partei A gewählt hat.
+    \end{itemize}
+    \vspace{0.5cm}
+    \begin{exampleblock}{Praxisbezug: Geldwäscheprävention (AML)}
+        \begin{itemize}
+            \item Eine neue Transaktion wird mit historischen Transaktionen verglichen.
+            \item Ähnelt sie in Parametern (Betrag, Herkunft, Frequenz) bekannten Betrugsfällen, wird Alarm geschlagen.
+        \end{itemize}
+    \end{exampleblock}
+\end{frame}
+
+\begin{frame}
+    \frametitle{Methode B: Naive Bayes}
+    \begin{itemize}
+        \item \textbf{Detail:} Probabilistischer Klassifikator basierend auf dem Satz von Bayes. Berechnet die Wahrscheinlichkeit einer Zugehörigkeit unter der Annahme, dass Merkmale unabhängig voneinander sind.
+    \end{itemize}
+    \vspace{0.5cm}
+    \begin{exampleblock}{Praxisbezug: Dokumentenklassifikation \& Spam-Filter}
+        \begin{itemize}
+            \item Analyse von Textinhalten in E-Mails oder Verträgen.
+            \item Automatisches Vorsortieren von Rechtsdokumenten (z.B. "Klage", "Rechnung", "Vertrag") basierend auf Wortvorkommen.
+        \end{itemize}
+    \end{exampleblock}
+\end{frame}
+
+\begin{frame}
+    \frametitle{Methode C: Entscheidungsbäume (Decision Trees)}
+    \begin{columns}
+        \begin{column}{0.6\textwidth}
+            \begin{itemize}
+                \item \textbf{Detail:} Modellierung von Entscheidungsregeln in einer Baumstruktur. Jeder Knoten prüft ein Attribut, jeder Zweig ist das Ergebnis.
+                \item \textbf{Vorteil:} Hohe Transparenz und Nachvollziehbarkeit ("White Box").
+            \end{itemize}
+        \end{column}
+        \begin{column}{0.35\textwidth}
+            \begin{exampleblock}{Praxis: Kredit-Scoring}
+                \begin{itemize}
+                    \item Einkommen $> X$?
+                    \item Schuldenfrei?
+                    \item Wohnort?
+                \end{itemize}
+                $\rightarrow$ Nachvollziehbare Begründung.
+            \end{exampleblock}
+        \end{column}
+    \end{columns}
+\end{frame}
+
+\begin{frame}
+    \frametitle{Kategorie 2: Unüberwachtes Lernen (Unsupervised Learning)}
+    \begin{columns}
+        \begin{column}{0.6\textwidth}
+            \begin{itemize}
+                \item \textbf{Funktionsweise:} Das Modell erhält Daten ohne Labels (keine "Lösungen").
+                \item \textbf{Ziel:} Erkennen von verborgenen Strukturen, Mustern oder Gruppierungen in den Daten.
+            \end{itemize}
+        \end{column}
+        \begin{column}{0.35\textwidth}
+            \begin{alertblock}{Vergleich}
+                Strukturieren einer unbekannten Aktenmenge ohne Vorgaben.
+            \end{alertblock}
+        \end{column}
+    \end{columns}
+\end{frame}
+
+\begin{frame}
+    \frametitle{Methode D: k-Means Clustering}
+    \begin{itemize}
+        \item \textbf{Detail:} Unterteilt Daten in \textit{k} Cluster, sodass Datenpunkte im selben Cluster möglichst ähnlich sind und sich von anderen Clustern unterscheiden.
+    \end{itemize}
+    \vspace{0.5cm}
+    \begin{exampleblock}{Praxisbezug: Kundensegmentierung \& Risikoanalyse}
+        \begin{itemize}
+            \item Banken gruppieren Kunden basierend auf Transaktionsverhalten.
+            \item Identifikation von "Ausreißer-Gruppen" (Anomalieerkennung), die nicht in normale Verhaltensmuster passen (potenzielles Betrugsrisiko oder High-Risk-Kunden).
+        \end{itemize}
+    \end{exampleblock}
+\end{frame}
+
+\begin{frame}
+    \frametitle{Zusammenfassung der Methoden}
+    \begin{table}
+        \centering
+        \begin{tabular}{l l l}
+            \toprule
+            \textbf{Methode} & \textbf{Typ} & \textbf{Anwendung} \\
+            \midrule
+            k-NN & Supervised & AML / Betrugserkennung \\
+            Naive Bayes & Supervised & Dokumentenklassifikation \\
+            Decision Trees & Supervised & Kredit-Scoring / Compliance \\
+            k-Means & Unsupervised & Kundensegmentierung \\
+            \bottomrule
+        \end{tabular}
+    \end{table}
+\end{frame}
+\end{document}
