@@ -447,18 +447,10 @@
 }
 
 \defbeamertemplate*{frametitle}{neutral-headlineslide}{%
-    \vbox{%
-        \begin{beamercolorbox}[ht= 3.5ex, wd=\textwidth,dp=.5ex]{frametitle}%
-            \usebeamerfont{frametitle}\hfill%
-        \end{beamercolorbox}%
-        \begin{beamercolorbox}[ht=1.0ex,wd=\textwidth,dp=.5ex]{framesubtitle}%
-            \usebeamerfont{framesubtitle}\hfill%
-        \end{beamercolorbox}%
-    }%
     \vfill
     \centering
-    \begin{beamercolorbox}[sep=8pt,center]{title}%
-        \usebeamerfont{title}\insertsectionhead\par%
+    \begin{beamercolorbox}[sep=12pt,center]{title}%
+        \usebeamerfont{title}\Large\bfseries\insertsectionhead\par%
     \end{beamercolorbox}
     \vfill
 }
@@ -474,6 +466,16 @@
 }
 
 \setbeamertemplate{frametitle}[neutral-default]
+
+% -------------------------------------------------
+% Automatic section slides
+% -------------------------------------------------
+\AtBeginSection[]{
+    \begin{frame}[plain]
+        \setbeamertemplate{frametitle}[neutral-headlineslide]
+        \frametitle{\insertsectionhead}
+    \end{frame}
+}
 
 % -------------------------------------------------
 % Minimal title page without TU/ASC logos or photo
