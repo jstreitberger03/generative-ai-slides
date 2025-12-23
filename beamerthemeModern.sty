@@ -1,0 +1,571 @@
+% ========================================
+% Modern Beamer Theme
+% ========================================
+% Self-sustained version based on NumPDEs theme
+% ========================================
+
+\NeedsTeXFormat{LaTeX2e}
+\ProvidesPackage{beamerthemeModern}[2025/12/23 Modern self-sustained theme]
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% General settings
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% ----------------------------------------
+% Load packages
+% ----------------------------------------
+\RequirePackage{adjustbox}
+\RequirePackage{booktabs}
+\RequirePackage{etoolbox}
+\RequirePackage{fontawesome}
+\RequirePackage{graphicx}
+\RequirePackage{ifthen}
+\RequirePackage{mathtools}
+\RequirePackage{microtype}
+\RequirePackage{pgfplots}
+\RequirePackage{pgfplotstable}
+\RequirePackage{qrcode}
+\RequirePackage{tabularray}
+\RequirePackage{tikz}
+\RequirePackage[absolute,overlay]{textpos}
+
+% ----------------------------------------
+% Load tikz libraries
+% ----------------------------------------
+\usetikzlibrary{calc, matrix, shapes, arrows, fadings, fpu, cd, spy, 3d,
+	shapes.multipart, shadows, shapes.symbols, positioning}
+
+% ----------------------------------------
+% Set up pgfplots
+% ----------------------------------------
+\pgfplotsset{%
+	compat=newest,%
+	every axis/.style={scale only axis},%
+	grid style={densely dotted, semithick},%
+}
+% ----------------------------------------
+% Add default set of markers for pgfplots
+% ----------------------------------------
+\tikzset{meshStyle/.style={thin, black, fill=none}}
+
+% Paul Tol's color scheme
+\definecolor{col1}{HTML}{332288}
+\definecolor{col2}{HTML}{88CCEE}
+\definecolor{col3}{HTML}{44AA99}
+\definecolor{col4}{HTML}{117733}
+\definecolor{col5}{HTML}{999933}
+\definecolor{col6}{HTML}{DDCC77}
+\definecolor{col7}{HTML}{CC6677}
+\definecolor{col8}{HTML}{882255}
+\definecolor{col9}{HTML}{AA4499}
+\pgfplotsset{%
+	% style for polynomial degree
+	degdefault/.style = {%
+			mark = *,%
+			mark size = 2pt,%
+			every mark/.append style = {solid},%
+			gray,%
+			every mark/.append style = {fill = gray!60!white}%
+		},%
+	marker1/.style = {%
+			degdefault,%
+			col1,%
+			every mark/.append style = {fill = col1!60!white}%
+		},%
+	marker2/.style = {%
+			degdefault,%
+			mark = triangle*,%
+			mark size = 2.75pt,%
+			every mark/.append style = {rotate = 180},
+			col3,%
+			every mark/.append style = {fill = col3!60!white}%
+		},%
+	marker3/.style = {%
+			degdefault,%
+			mark = halfdiamond*,%
+			every mark/.append style = {rotate = 180},%
+			mark size = 2.75pt,%
+			col4,%
+			every mark/.append style = {fill = col4!60!white}%
+		},%
+	marker4/.style = {%
+			degdefault,%
+			mark = halfdiamond*,%
+			every mark/.append style = {rotate = 90},%
+			mark size = 2.75pt,%
+			col5,%
+			every mark/.append style = {fill = col5!60!white}%
+		},%
+	marker5/.style = {%
+			degdefault,%
+			mark = halfsquare*,%
+			every mark/.append style = {rotate = 135},%
+			mark size = 2.2pt,%
+			col7,%
+			every mark/.append style = {fill = col7!60!white}%
+		},%
+	marker6/.style = {%
+			degdefault,%
+			mark = halfsquare*,%
+			every mark/.append style = {rotate = 315},%
+			mark size = 2.2pt,%
+			col8,%
+			every mark/.append style = {fill = col8!60!white}%
+		},%
+	% style for refinement
+	uniform/.style = {%
+			dashed,%
+			every mark/.append style = {%
+					black!50!white,%
+					fill = black!20!white
+				}%
+		},%
+	adaptive/.style = {%
+			solid%
+		},%
+}
+
+% ----------------------------------------
+% Add slope triangles for pgfplots
+% ----------------------------------------
+
+\newcommand\drawslopetriangle[4][ST]{
+	\pgfplotsextra
+	{
+		\pgfkeys{/pgf/fpu=true}
+		\pgfmathsetmacro\leftcoord{#3};
+		\pgfmathsetmacro\rightcoord{10*#3};
+		\pgfmathsetmacro\bottomcoord{#4};
+		\pgfmathsetmacro\topcoord{10^(#2)*#4};
+		\pgfkeys{/pgf/fpu=false}
+		\coordinate (#1-BL) at (axis cs:\leftcoord,\bottomcoord);
+		\coordinate (#1-BR) at (axis cs:\rightcoord,\bottomcoord);
+		\coordinate (#1-TL) at (axis cs:\leftcoord,\topcoord);
+		\shadedraw[%
+			bottom color = black!20,%
+			middle color = black!5,%
+			top color    = white,%
+			draw         = black,%
+			font         = \scriptsize%
+		]
+		(#1-TL) -- (#1-BL) node[midway, left] {\(#2\)}
+		-- (#1-BR) node[midway, below] {\(1\)} -- (#1-TL);
+	}
+}
+
+\newcommand\drawswappedslopetriangle[4][SST]{
+	\pgfplotsextra
+	{
+		\pgfkeys{/pgf/fpu=true}
+		\pgfmathsetmacro\leftcoord{#3/10};
+		\pgfmathsetmacro\rightcoord{#3};
+		\pgfmathsetmacro\topcoord{#4};
+		\pgfmathsetmacro\bottomcoord{10^(-#2)*#4};
+		\pgfkeys{/pgf/fpu=false}
+		\coordinate (#1-TR) at (axis cs:\rightcoord,\topcoord);
+		\coordinate (#1-BR) at (axis cs:\rightcoord,\bottomcoord);
+		\coordinate (#1-TL) at (axis cs:\leftcoord,\topcoord);
+		\shadedraw[%
+			bottom color = black!20,%
+			middle color = black!5,%
+			top color    = white,%
+			draw         = black,%
+			font         = \scriptsize%
+		]
+		(#1-BR) -- (#1-TR) node[midway, right] {\(#2\)}
+		-- (#1-TL) node[midway, above] {\(1\)} -- (#1-BR);
+	}
+}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Color settings (Modern Palette)
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\definecolor{ModernBlue}{RGB}{20,79,118}      % primary
+\definecolor{ModernGray}{RGB}{245,245,240}    % light background tint
+\definecolor{ModernGreen}{RGB}{29,141,121}    % positive / example
+\definecolor{ModernRed}{RGB}{198,92,54}       % alert/accent
+
+% Map to structure
+\setbeamercolor*{structure}{fg=ModernBlue,bg=white}
+\setbeamercolor{title}{use=structure, fg=structure.fg,bg=structure.bg}
+\setbeamercolor{framesubtitle}{use=structure,fg=ModernGray!70!black,bg=structure.bg}
+\setbeamercolor{alerted text}{fg=ModernRed}
+
+% Blocks
+\setbeamercolor*{block title}{fg=black, bg=ModernGray!80!ModernBlue}
+\setbeamercolor{block body}{fg=black, bg=ModernGray!60!white}
+\setbeamercolor*{block title example}{fg=black, bg=ModernGray!75!ModernGreen}
+\setbeamercolor{block body example}{fg=black, bg=ModernGray!55!white}
+\setbeamercolor*{block title alerted}{fg=black, bg=ModernGray!75!ModernRed}
+\setbeamercolor{block body alerted}{fg=black, bg=ModernGray!55!white}
+
+% Footline & Date
+\setbeamercolor{footline}{fg=ModernBlue,bg=bg}
+\setbeamercolor{date}{fg=ModernBlue!60!black,bg=white}
+
+% Bibliography colors
+\setbeamercolor{footnote}{fg=ModernGray!70!black,bg=white}
+\setbeamercolor{bibliography entry author}{fg=ModernGray!40!black,bg=white}
+\setbeamercolor{bibliography item}{fg=ModernBlue!80!ModernGray,bg=white}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Font settings
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\usefonttheme{structurebold}
+\usefonttheme[onlymath]{serif}
+\setbeamerfont{framesubtitle}{size=\scriptsize}
+\setbeamerfont{title}{size=\LARGE}
+\setbeamerfont{date}{size=\scriptsize}
+\setbeamerfont{author}{size=\Large}
+\setbeamerfont{coauthors}{parent=author,size=\footnotesize}
+\setbeamerfont{conference}{parent=date,size=\small}
+\setbeamerfont{author in head/foot}{size=\fontsize{8pt}{8pt}\selectfont}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Inner Theme Settings (Blocks, Itemize, etc)
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\setbeamertemplate{blocks}[rounded]
+\pgfdeclareverticalshading[lower.bg,lower.bg]{bmb@transition}{200cm}{
+	color(0pt)=(lower.bg); color(2pt)=(lower.bg); color(4pt)=(lower.bg)}
+
+\renewcommand{\footnoterule}{\hrule}
+
+\setbeamertemplate{itemize item}{%
+	\raise0.3ex\hbox{\usebeamercolor{itemize item}{\tiny\faSquare}}%
+}
+\setbeamertemplate{itemize subitem}{%
+	\raise-0.1ex\hbox{\usebeamercolor{itemize item}{\large\faCaretRight}}%
+}
+\setbeamertemplate{itemize subsubitem}{\raise-0.5ex\hbox{\huge{-}}}
+\setbeamertemplate{enumerate item}{%
+	\raise0.1ex\hbox{\footnotesize\usebeamercolor[fg]{enumerate item}\faSquare%
+		\llap{\usebeamercolor[bg]{enumerate item}\insertenumlabel\kern1.2pt}}%
+}
+\setbeamertemplate{enumerate subitem}{\footnotesize\insertsubenumlabel.}
+\setbeamertemplate{enumerate subsubitem}{\expandafter\romannumeral\insertsubsubenumlabel.}
+
+\setbeamertemplate{navigation symbols}{}
+
+% Margins
+\ifthenelse{\lengthtest{\beamer@paperwidth=16cm}}%
+{\setbeamersize{text margin left=0.03\paperwidth, text margin right=0.03\paperwidth}}%
+{\setbeamersize{text margin left=0.02\paperwidth, text margin right=0.02\paperwidth}}
+\setlength{\leftmargini}{0.04\paperwidth}
+\setlength{\leftmarginii}{0.04\paperwidth}
+\setlength{\leftmarginiii}{0.04\paperwidth}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Helper Commands
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\newcommand{\ASC@coauthors}{}
+\newcommand{\coauthor}[1]{\listgadd{\ASC@coauthors}{#1}}
+\newcommand{\insertcoauthors}{%
+	\newboolean{first}%
+	\setboolean{first}{true}%
+	\renewcommand{\do}[1]{\ifthenelse{\boolean{first}}%
+		{##1\setboolean{first}{false}}%
+		{, ##1}}%
+	\dolistloop{\ASC@coauthors}%
+}
+
+\newcommand{\insertconference}{}
+\newcommand{\insertshortconference}{}
+\newcommand{\conference}[2][]{\renewcommand{\insertshortconference}{#1}%
+	\renewcommand{\insertconference}{#2}%
+}
+
+\newcommand{\inserthostinstitute}{}
+\newcommand{\insertshorthostinstitute}{}
+\newcommand{\hostinstitute}[2][]{\renewcommand{\insertshorthostinstitute}{#1}%
+	\renewcommand{\inserthostinstitute}{#2}%
+}
+
+\newcommand{\linktoslides}{}
+
+% Funding commands (kept for compatibility but can be empty)
+\newboolean{ASC@usefunding}
+\setboolean{ASC@usefunding}{false}
+\newcommand{\hidefunding}{\setboolean{ASC@usefunding}{false}}
+\newcommand{\ASC@funding}{}
+\newcommand{\funding}[2][4ex]{\listgadd{\ASC@funding}{}}
+\newcommand{\localfunding}[2][4ex]{\listgadd{\ASC@funding}{}}
+\newcommand{\insertfunding}{}
+
+% Logo commands (kept for compatibility)
+\newboolean{ASC@uselogos}
+\setboolean{ASC@uselogos}{false}
+\newcommand{\hidelogos}{\setboolean{ASC@uselogos}{false}}
+
+% QR code commands
+\newboolean{ASC@useqrcodes}
+\setboolean{ASC@useqrcodes}{false}
+\newcommand{\hideqrcodes}{\setboolean{ASC@useqrcodes}{false}}
+
+% Page numbering
+\newboolean{ASC@totalpagenumber}
+\setboolean{ASC@totalpagenumber}{false}
+\newcommand{\showtotalpagenumber}{\setboolean{ASC@totalpagenumber}{true}}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Bibliography Setup
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\usepackage[%
+	backend      = biber,%
+	style        = authoryear,%
+	url          = false,%
+	doi          = true,%
+	isbn         = false,%
+	dashed       = false,%
+	maxbibnames  = 50,%
+	maxcitenames = 6,%
+	mincitenames = 1,%
+	uniquelist   = false,%
+	giveninits   = false,%
+	uniquename   = init
+]{biblatex}
+% Try to load literature.bib if it exists
+\IfFileExists{literature.bib}{\addbibresource{literature.bib}}{}
+
+\renewcommand{\thefootnote}{}
+\setlength{\footnotesep}{0.4cm}
+\renewcommand{\finalnamedelim}{\addcomma \addspace}
+
+% redefine cite command to have author (only last name), journal, year
+\renewbibmacro*{cite}{%
+	%
+	\footnote{
+		\usebeamerfont{bibliography in footnote}%
+		\hskip -2.25em
+		% If the entry type is an article, it adds a blue file icon (\faFileTextO) 
+		%followed by a space.
+		\ifentrytype{article}
+		{\kern.5em\normalsize{\color{gray}\faFileTextO}\space}
+		{}%
+		%
+		% If the entry type is a book, it adds a book icon (\faBook) followed by a 
+		% space.
+		\ifentrytype{book}
+		{\kern.5em\normalsize{\color{gray} \faBook}\space}
+		{}%
+		%
+		% The citation is then formatted in a smaller font size (\scriptsize).
+		\scriptsize
+		%
+		% If the citation does not have a shorthand field, check if the label 
+		% name or label year is undefined.
+		\iffieldundef{shorthand}
+		{\ifthenelse{\ifnameundef{labelname}\OR\iffieldundef{labelyear}}
+			{\usebibmacro{cite:label}%
+				\setunit{\printdelim{nonameyeardelim}}}
+			{\printnames{labelname}%
+				\setunit{\printdelim{nameyeardelim}}}%
+		}
+		%
+		% After the label, add a colon and a space (\addcolon\space) and 
+		% use the journal macro to print the journal name.
+		\setunit{\addcolon \addthinspace}%
+		\ifentrytype{article}
+		{
+			\usebibmacro{journal}%
+			\setunit{\addcomma \space}
+			\printfield{volume}
+		}{}% Volume number
+		\ifentrytype{book}
+		{
+			\printfield{series}% If no journal title, print series (for books)
+		}{}
+		% add eprint if it is a preprint
+		\iffieldundef{eprint}{}{\usebibmacro{eprint}}
+		\setunit{\addthinspace}
+		\printtext{(\printfield{year})}%
+		{\usebibmacro{cite:shorthand}}
+		%
+	}
+}
+% Redefine the title format to remove quotation marks
+\DeclareFieldFormat[article]{title}{#1} % Specifically for articles
+\DeclareFieldFormat[book]{title}{#1} % Specifically for books
+
+% Renew also the \fullcite command to have the same format
+\DeclareCiteCommand{\fullcite}
+{\usebibmacro{prenote}}
+{
+	\hskip -0.75em
+	\ifentrytype{article}
+	{\kern.5em\normalsize{\color{ModernBlue}\faFileTextO}\space}
+	{}%
+	%
+	% If the entry type is a book, it adds a book icon (\faBook) followed by a 
+	% space.
+	\ifentrytype{book}
+	{\kern.5em\normalsize{\color{ModernBlue} \faBook}\space}
+	{}%
+	{\color{gray} \small \printnames{labelname}}\\% Last names
+		{\color{ModernBlue} \small \printfield{title}}\\% Title without quotes
+	\ifentrytype{article}
+	{
+		\color{gray} \small \usebibmacro{journal}%
+		\setunit{\addcomma \space}
+		\printfield{volume}
+	}{}% Volume number
+	\ifentrytype{book}
+	{
+		\color{gray} \small \printfield{series}% If no journal title, print series (for books)
+	}{}
+	% add eprint if it is a preprint and remove space between arxiv and number
+	\iffieldundef{eprint}{}{Preprint \usebibmacro{eprint}}
+	\setunit{\addthinspace}
+	\printtext{(\printfield{year})}%
+	\par
+	\vspace{.5ex}
+}
+{\multicitedelim}
+{\usebibmacro{postnote}}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Templates (Frametitle, Footline, Titlepage)
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% -------------------------------------------------
+% Minimal frametitle variants (no logos, clean lines)
+% -------------------------------------------------
+\defbeamertemplate*{frametitle}{neutral-default}{%
+    \vbox{%
+        \vspace*{.5ex}%
+        \begin{beamercolorbox}[ht = 3ex, wd=\textwidth,dp=.5ex]{frametitle}%
+            \usebeamerfont{frametitle}\insertframetitle%
+        \end{beamercolorbox}%
+        \ifx\insertframesubtitle\empty
+        \else
+            \begin{beamercolorbox}[ht=0.1ex,wd=\textwidth,dp=.5ex]{framesubtitle}%
+                \usebeamerfont{framesubtitle}\insertframesubtitle%
+            \end{beamercolorbox}%
+        \fi
+        \vskip-.7ex%
+    }%
+}
+
+\defbeamertemplate*{frametitle}{neutral-headlineslide}{%
+    \vbox{%
+        \begin{beamercolorbox}[ht= 3.5ex, wd=\textwidth,dp=.5ex]{frametitle}%
+            \usebeamerfont{frametitle}\hfill%
+        \end{beamercolorbox}%
+        \begin{beamercolorbox}[ht=1.0ex,wd=\textwidth,dp=.5ex]{framesubtitle}%
+            \usebeamerfont{framesubtitle}\hfill%
+        \end{beamercolorbox}%
+    }%
+    \vfill
+    \centering
+    \begin{beamercolorbox}[sep=8pt,center]{title}%
+        \usebeamerfont{title}\insertsectionhead\par%
+    \end{beamercolorbox}
+    \vfill
+}
+
+\defbeamertemplate*{frametitle}{neutral-blank}{%
+    \vbox{%
+        \vspace*{.5ex}%
+        \begin{beamercolorbox}[ht = 2.5ex, wd=\textwidth,dp=.5ex]{frametitle}%
+            \usebeamerfont{frametitle}\insertframetitle%
+        \end{beamercolorbox}%
+        \vskip-.7ex%
+    }%
+}
+
+\setbeamertemplate{frametitle}[neutral-default]
+
+% -------------------------------------------------
+% Minimal title page without TU/ASC logos or photo
+% -------------------------------------------------
+
+% Neutral title page: clean layout, no branding
+% Predefine simple, local lengths to avoid @-macros
+\newlength{\NeutralTitleMargin}
+\newlength{\NeutralTitleWidth}
+\setlength{\NeutralTitleMargin}{0.1\paperwidth}
+\setlength{\NeutralTitleWidth}{0.86\paperwidth}
+
+\renewcommand{\titlepage}{%
+    \begin{minipage}[t]{\NeutralTitleWidth}%
+        \begin{beamercolorbox}[sep=3mm,wd=\textwidth]{date}%
+            \vskip2mm%
+            \usebeamerfont{date}\usebeamercolor{date}\insertdate%
+            \ifthenelse{\equal{\insertdate}{}}{}{%
+                \ifthenelse{\equal{\inserthostinstitute}{}}{%
+                    \ifthenelse{\equal{\insertconference}{}}{}{%
+                        \,\scriptsize$\bullet$\,%
+                    }%
+                }{%
+                    \,\scriptsize$\bullet$\,%
+                }%
+            }%
+            \inserthostinstitute%
+            \ifthenelse{\equal{\inserthostinstitute}{}}{}{%
+                \ifthenelse{\equal{\insertconference}{}}{}{%
+                    \,\scriptsize$\bullet$\,%
+                }%
+            }%
+            \insertconference%
+        \end{beamercolorbox}%
+        \begin{beamercolorbox}[sep=3mm,wd=\textwidth]{title}%
+            \renewcommand{\baselinestretch}{1.1}%
+            \usebeamerfont{title}\inserttitle%
+        \end{beamercolorbox}%
+        \begin{beamercolorbox}[sep=3mm,wd=\textwidth]{author}%
+            \usebeamerfont{author}\insertauthor\strut%
+        \end{beamercolorbox}%
+    \end{minipage}%
+    % QR code disabled by default
+    \vskip1ex minus 2.5ex%
+    \ifx\insertinstitute\empty
+        \hspace*{\fill}%
+    \else%
+        \hspace*{\fill}%
+        \begin{beamercolorbox}[center,wd=\NeutralTitleWidth]{institute}%
+            \usebeamerfont{institute}\insertinstitute\strut%
+        \end{beamercolorbox}%
+        \hspace*{\fill}%
+        \vfill%
+    \fi%
+    \vskip 6ex minus 3.5ex%
+    \hspace*{\fill}%
+    \ifthenelse{\boolean{ASC@usefunding}}{\insertfunding}{}%
+    \hspace*{\fill}%
+}
+
+\def\ASCtitlepageSlide{%
+    \begin{frame}[blank,noframenumbering]
+        \titlepage
+    \end{frame}
+}
+\renewcommand{\maketitle}{\ASCtitlepageSlide}
+
+% -------------------------------------------------
+% Ensure new templates are active by default
+% -------------------------------------------------
+% Neutral, minimal footline: author (left) – title (center) – page (right)
+\defbeamertemplate*{footline}{neutral-default}{%
+    \leavevmode%
+    \begin{beamercolorbox}[wd=\paperwidth, ht=3ex, dp=1ex]{footline}%
+        \hbox to \paperwidth{%
+            \hspace{1em}{\usebeamerfont{author in head/foot}\insertshortauthor}%
+            \hfill{\usebeamerfont{author in head/foot}\insertshorttitle}%
+            \hfill{\usebeamerfont{author in head/foot}\insertframenumber}\hspace{1em}%
+        }%
+    \end{beamercolorbox}%
+}
+\setbeamertemplate{footline}[neutral-default]
+\BeforeBeginEnvironment{frame}{%
+    \setbeamertemplate{footline}[neutral-default]%
+    \setbeamertemplate{frametitle}[neutral-default]%
+}
+
+\define@key{beamerframe}{headlineslide}[true]{%
+    \setbeamertemplate{frametitle}[neutral-headlineslide]%
+}
+
+\define@key{beamerframe}{blank}[true]{%
+    \setbeamertemplate{frametitle}[neutral-blank]%
+    \setbeamertemplate{footline}[blank]%
+}
