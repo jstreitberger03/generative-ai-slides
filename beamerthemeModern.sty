@@ -472,8 +472,12 @@
 % -------------------------------------------------
 \AtBeginSection[]{
     \begin{frame}[plain]
-        \setbeamertemplate{frametitle}[neutral-headlineslide]
-        \frametitle{\insertsectionhead}
+        \vfill
+        \centering
+        \begin{beamercolorbox}[sep=12pt,center]{title}%
+            \usebeamerfont{title}\Large\bfseries\insertsectionhead\par%
+        \end{beamercolorbox}
+        \vfill
     \end{frame}
 }
 
