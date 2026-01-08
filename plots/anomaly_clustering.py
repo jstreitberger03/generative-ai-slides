@@ -74,9 +74,9 @@ ax = axes[1]
 # Generate clustered data (3 customer segments)
 np.random.seed(42)
 n_per_cluster = 50
-cluster1 = np.random.randn(n_per_cluster, 2) * 0.5 + np.array([1, 1])  # Low risk
-cluster2 = np.random.randn(n_per_cluster, 2) * 0.6 + np.array([4, 1.5])  # Medium risk
-cluster3 = np.random.randn(n_per_cluster, 2) * 0.4 + np.array([2.5, 4])  # High risk
+cluster1 = np.random.randn(n_per_cluster, 2) * 0.5 + np.array([1, 1])  # Segment A: bottom-left (Niedrig)
+cluster2 = np.random.randn(n_per_cluster, 2) * 0.6 + np.array([4, 1])  # Segment B: bottom-right (Standard)
+cluster3 = np.random.randn(n_per_cluster, 2) * 0.4 + np.array([2.5, 4])  # Segment C: top (Erhöht)
 
 X_clusters = np.vstack([cluster1, cluster2, cluster3])
 
