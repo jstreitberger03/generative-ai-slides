@@ -30,10 +30,10 @@ jobs:
       - name: Generate plots
         run: |
           cd plots
-          python overfitting_visualization.py
-          python supervised_vs_unsupervised.py
-          python instance_vs_model.py
-          python precision_recall.py
+          for script in *.py; do
+            echo "Running $script..."
+            python "$script"
+          done
           
       - name: Compile LaTeX document (full version)
         uses: xu-cheng/latex-action@v3
