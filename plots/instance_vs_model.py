@@ -6,6 +6,10 @@ import matplotlib.pyplot as plt
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn.linear_model import LogisticRegression
 
+# FMA Colors
+FMA_ORANGE = '#EC6600'
+FMA_BLUE = '#144F76'
+
 np.random.seed(42)
 
 # Generate simple data
@@ -23,21 +27,25 @@ y_min, y_max = X[:, 1].min() - 1, X[:, 1].max() + 1
 xx, yy = np.meshgrid(np.linspace(x_min, x_max, 200),
                      np.linspace(y_min, y_max, 200))
 
+# Custom colormap with FMA colors
+from matplotlib.colors import LinearSegmentedColormap
+fma_cmap = LinearSegmentedColormap.from_list('fma', [FMA_ORANGE, '#F5F5F0', FMA_BLUE])
+
 # Instance-based: k-NN
 ax = axes[0]
 knn = KNeighborsClassifier(n_neighbors=5)
 knn.fit(X, y)
 Z = knn.predict(np.c_[xx.ravel(), yy.ravel()]).reshape(xx.shape)
-ax.contourf(xx, yy, Z, alpha=0.3, cmap='RdYlGn')
-ax.scatter(X[y==0, 0], X[y==0, 1], c='#E74C3C', s=40, alpha=0.7, label='Verdächtig')
-ax.scatter(X[y==1, 0], X[y==1, 1], c='#27AE60', s=40, alpha=0.7, label='Normal')
+ax.contourf(xx, yy, Z, alpha=0.3, cmap=fma_cmap)
+ax.scatter(X[y==0, 0], X[y==0, 1], c=FMA_ORANGE, s=40, alpha=0.7, label='Verdächtig')
+ax.scatter(X[y==1, 0], X[y==1, 1], c=FMA_BLUE, s=40, alpha=0.7, label='Normal')
 
 # Highlight new point and neighbors
 new_point = np.array([[1.5, 2]])
 ax.scatter(new_point[0, 0], new_point[0, 1], c='#9B59B6', s=150, marker='*', 
            edgecolors='black', linewidth=1.5, label='Neu', zorder=10)
 
-ax.set_title('Instanzbasiert (k-NN)\nSpeichert alle Trainingsdaten', fontsize=11, fontweight='bold')
+ax.set_title('Instanzbasiert (k-NN)\nSpeichert alle Trainingsdaten', fontsize=11, fontweight='bold', color=FMA_ORANGE)
 ax.set_xlabel('Feature 1')
 ax.set_ylabel('Feature 2')
 ax.legend(loc='upper left', fontsize=8)
@@ -48,9 +56,9 @@ ax = axes[1]
 lr = LogisticRegression()
 lr.fit(X, y)
 Z = lr.predict(np.c_[xx.ravel(), yy.ravel()]).reshape(xx.shape)
-ax.contourf(xx, yy, Z, alpha=0.3, cmap='RdYlGn')
-ax.scatter(X[y==0, 0], X[y==0, 1], c='#E74C3C', s=40, alpha=0.7, label='Verdächtig')
-ax.scatter(X[y==1, 0], X[y==1, 1], c='#27AE60', s=40, alpha=0.7, label='Normal')
+ax.contourf(xx, yy, Z, alpha=0.3, cmap=fma_cmap)
+ax.scatter(X[y==0, 0], X[y==0, 1], c=FMA_ORANGE, s=40, alpha=0.7, label='Verdächtig')
+ax.scatter(X[y==1, 0], X[y==1, 1], c=FMA_BLUE, s=40, alpha=0.7, label='Normal')
 
 # Draw decision boundary line
 w = lr.coef_[0]
@@ -62,7 +70,7 @@ ax.plot(x_line, y_line, 'k--', linewidth=2, label='Trennlinie')
 ax.scatter(new_point[0, 0], new_point[0, 1], c='#9B59B6', s=150, marker='*', 
            edgecolors='black', linewidth=1.5, label='Neu', zorder=10)
 
-ax.set_title('Modellbasiert (Log. Regression)\nLernt Parameter θ', fontsize=11, fontweight='bold')
+ax.set_title('Modellbasiert (Log. Regression)\nLernt Parameter θ', fontsize=11, fontweight='bold', color=FMA_ORANGE)
 ax.set_xlabel('Feature 1')
 ax.set_ylabel('Feature 2')
 ax.legend(loc='upper left', fontsize=8)

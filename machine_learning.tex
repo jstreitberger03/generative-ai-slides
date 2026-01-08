@@ -9,7 +9,7 @@
 % biblatex already loaded by beamerthemeModern.sty with literature.bib
 
 \title{Maschinelles Lernen}
-\subtitle{Eine Einführung für JuristInnen}
+\subtitle{Deep Dive}
 \author{Julian Streitberger (FMA -- Abteilung IV/4)}
 \date{\today}
 
@@ -35,16 +35,16 @@
             \end{block}
             \vspace{0.4cm}
             \textbf{Traditionelle Programmierung:}\\
-            Mensch schreibt Regeln $\rightarrow$ Computer führt aus
+            Mensch schreibt Regeln $\Rightarrow$ Computer führt aus
             \vspace{0.3cm}
             
             \textbf{Maschinelles Lernen:}\\
-            Daten + Beispiele $\rightarrow$ Computer lernt Regeln
+            Daten + Beispiele $\Rightarrow$ Computer lernt Regeln
         \end{column}
         \begin{column}{0.42\textwidth}
             \begin{exampleblock}{Beispiel: Geldwäsche}
                 \textbf{Regelbasiert:}\\
-                „Melde alle TX $>$ \texteuro 10.000"
+                „Melde alle Transaktionen über 10.000 \texteuro"
                 \vspace{0.2cm}
                 
                 \textbf{ML-basiert:}\\
@@ -137,12 +137,10 @@
 \begin{frame}
     \frametitle{Das fundamentale Problem: Generalisierung}
     \begin{center}
-        \includegraphics[width=0.95\linewidth]{plots/overfitting_visualization.pdf}
+        \includegraphics[width=0.9\linewidth]{plots/overfitting_visualization.pdf}
     \end{center}
-    \vspace{-0.2cm}
     \begin{alertblock}{Juristische Analogie}
-        \textbf{Overfitting} = Das Modell „lernt den Fall auswendig" statt das Prinzip zu verstehen.\\
-        Wie ein Jurist, der nur die Urteile kennt, aber nicht die dahinterliegenden Rechtsgrundsätze.
+        \textbf{Overfitting} = Das Modell „lernt auswendig" statt das Prinzip zu verstehen.
     \end{alertblock}
 \end{frame}
 
@@ -181,25 +179,25 @@
             \begin{center}
             \resizebox{0.95\textwidth}{!}{%
             \begin{tikzpicture}[
-                level 1/.style={sibling distance=4.5cm, level distance=1.4cm},
-                level 2/.style={sibling distance=2.2cm, level distance=1.4cm},
-                decision/.style={diamond, draw, fill=blue!20, text width=2cm, align=center, inner sep=1pt, font=\scriptsize},
-                leaf/.style={rectangle, rounded corners, draw, fill=green!20, text width=1.4cm, align=center, font=\scriptsize},
-                leafred/.style={rectangle, rounded corners, draw, fill=red!20, text width=1.4cm, align=center, font=\scriptsize},
-                leaforange/.style={rectangle, rounded corners, draw, fill=orange!20, text width=1.4cm, align=center, font=\scriptsize},
+                level 1/.style={sibling distance=5cm, level distance=1.5cm},
+                level 2/.style={sibling distance=2.4cm, level distance=1.5cm},
+                decision/.style={diamond, draw, fill=blue!20, text width=1.8cm, align=center, inner sep=1pt, font=\scriptsize},
+                leaf/.style={rectangle, rounded corners, draw, fill=green!20, text width=1.3cm, align=center, font=\scriptsize},
+                leafred/.style={rectangle, rounded corners, draw, fill=red!20, text width=1.3cm, align=center, font=\scriptsize},
+                leaforange/.style={rectangle, rounded corners, draw, fill=orange!20, text width=1.3cm, align=center, font=\scriptsize},
                 edge from parent/.style={draw, -latex, thick},
                 every node/.style={font=\small}
             ]
-            \node [decision] {Betrag $>$\texteuro15k?}
+            \node [decision] {Betrag $>$15k?}
                 child { node [decision] {Hochrisiko-Land?}
-                    child { node [leaf] {Niedrig} edge from parent node[left, font=\tiny] {Nein} }
-                    child { node [leaforange] {Mittel} edge from parent node[right, font=\tiny] {Ja} }
-                    edge from parent node[left, font=\tiny] {Nein}
+                    child { node [leaf] {Niedrig} edge from parent node[left, font=\tiny, xshift=-2pt] {Nein} }
+                    child { node [leaforange] {Mittel} edge from parent node[right, font=\tiny, xshift=2pt] {Ja} }
+                    edge from parent node[left, font=\tiny, xshift=-3pt] {Nein}
                 }
                 child { node [decision] {PEP?}
-                    child { node [leaforange] {Mittel} edge from parent node[left, font=\tiny] {Nein} }
-                    child { node [leafred] {Hoch} edge from parent node[right, font=\tiny] {Ja} }
-                    edge from parent node[right, font=\tiny] {Ja}
+                    child { node [leaforange] {Mittel} edge from parent node[left, font=\tiny, xshift=-2pt] {Nein} }
+                    child { node [leafred] {Hoch} edge from parent node[right, font=\tiny, xshift=2pt] {Ja} }
+                    edge from parent node[right, font=\tiny, xshift=3pt] {Ja}
                 };
             \end{tikzpicture}
             }%
@@ -328,16 +326,55 @@
     \frametitle{Neuronale Netze \& Deep Learning}
     \begin{columns}
         \begin{column}{0.55\textwidth}
-            \begin{itemize}
-                \item \textbf{Aufbau:} Schichten von „Neuronen"
-                \item \textbf{Lernen:} Gewichte werden angepasst
-                \item \textbf{Stärke:} Komplexe Muster in unstrukturierten Daten
-            \end{itemize}
-            \vspace{0.3cm}
+            \begin{center}
+            \resizebox{0.85\textwidth}{!}{%
+            \begin{tikzpicture}[
+                neuron/.style={circle, draw, fill=blue!20, minimum size=0.6cm, font=\tiny},
+                input/.style={circle, draw, fill=green!20, minimum size=0.6cm, font=\tiny},
+                output/.style={circle, draw, fill=orange!20, minimum size=0.6cm, font=\tiny},
+                connection/.style={->, thick, gray!60}
+            ]
+            % Input layer
+            \foreach \i in {1,...,4}
+                \node[input] (I\i) at (0, -\i*0.9+2.7) {};
+            \node[below=0.1cm of I4, font=\scriptsize] {Input};
+            
+            % Hidden layer 1
+            \foreach \i in {1,...,5}
+                \node[neuron] (H1\i) at (2, -\i*0.9+3.15) {};
+            \node[below=0.1cm of H15, font=\scriptsize] {Hidden 1};
+            
+            % Hidden layer 2
+            \foreach \i in {1,...,5}
+                \node[neuron] (H2\i) at (4, -\i*0.9+3.15) {};
+            \node[below=0.1cm of H25, font=\scriptsize] {Hidden 2};
+            
+            % Output layer
+            \foreach \i in {1,...,2}
+                \node[output] (O\i) at (6, -\i*0.9+1.35) {};
+            \node[below=0.1cm of O2, font=\scriptsize] {Output};
+            
+            % Connections Input -> Hidden 1
+            \foreach \i in {1,...,4}
+                \foreach \j in {1,...,5}
+                    \draw[connection] (I\i) -- (H1\j);
+            
+            % Connections Hidden 1 -> Hidden 2
+            \foreach \i in {1,...,5}
+                \foreach \j in {1,...,5}
+                    \draw[connection] (H1\i) -- (H2\j);
+            
+            % Connections Hidden 2 -> Output
+            \foreach \i in {1,...,5}
+                \foreach \j in {1,...,2}
+                    \draw[connection] (H2\i) -- (O\j);
+            \end{tikzpicture}
+            }%
+            \end{center}
+            \vspace{0.2cm}
             \textbf{Wann nutzen?}
             \begin{itemize}
-                \item Textanalyse (NLP)
-                \item Bildverarbeitung
+                \item Textanalyse (NLP), Bildverarbeitung
                 \item Große Datenmengen
             \end{itemize}
         \end{column}
@@ -403,9 +440,9 @@
     \end{center}
     \vspace{-0.2cm}
     \[
-        \text{Precision} = \frac{TP}{TP + FP} \qquad
-        \text{Recall} = \frac{TP}{TP + FN} \qquad
-        F_1 = 2 \, \frac{P \, R}{P + R}
+        \text{Precision} = \frac{\textup{TP}}{\textup{TP} + \textup{FP}} \qquad
+        \text{Recall} = \frac{\textup{TP}}{\textup{TP} + \textup{FN}} \qquad
+        F_1 = 2 \cdot \frac{P \cdot R}{P + R}
     \]
 \end{frame}
 
@@ -445,7 +482,7 @@
     \frametitle{Cross-Validation: Robuste Schätzung}
     \begin{columns}
         \begin{column}{0.55\textwidth}
-            \textbf{K-Fold Cross-Validation:}
+            \textbf{$k$-Fold Cross-Validation:}
             \begin{enumerate}
                 \item Teile Daten in $k$ gleiche Teile
                 \item Trainiere $k$ mal, jedes Mal mit anderem Test-Teil
@@ -475,7 +512,7 @@
 \end{frame}
 
 %===============================================================================
-\section{ML für Banken \& Aufsicht}
+\section{Machine Learning in der Praxis}
 %===============================================================================
 
 \begin{frame}
@@ -526,7 +563,7 @@
     \frametitle{Erklärbarkeit: Warum hat das Modell so entschieden?}
     \begin{columns}
         \begin{column}{0.48\textwidth}
-            \begin{block}{Feature Importance}
+            \begin{block}{Merkmalswichtigkeit (Feature Importance)}
                 Welche Eingabevariablen haben den größten Einfluss?
                 \begin{itemize}
                     \item Bei Gradient Boosting: eingebaut
@@ -534,12 +571,13 @@
                 \end{itemize}
             \end{block}
             \vspace{0.2cm}
-            \begin{block}{SHAP Values}
-                Erklärt \textbf{einzelne Vorhersagen}:
+            \begin{block}{Erklärungsmethoden}
                 \begin{itemize}
-                    \item Warum dieser Score für diesen Kunden?
-                    \item Welche Faktoren erhöhen/senken Risiko?
+                    \item \textbf{LIME:} Lokale Erklärungen
+                    \item \textbf{SHAP:} Einzelne Vorhersagen erklären
                 \end{itemize}
+                \vspace{0.1cm}
+                \textit{Warum dieser Score für diesen Kunden?}
             \end{block}
         \end{column}
         \begin{column}{0.48\textwidth}
@@ -559,7 +597,7 @@
 \end{frame}
 
 \begin{frame}
-    \frametitle{Fragen für Vor-Ort-PrüferInnen}
+    \frametitle{Mögliche Fragen für Vor-Ort-Prüfungen}
     \begin{columns}
         \begin{column}{0.48\textwidth}
             \begin{block}{Zur Modellentwicklung}
@@ -653,15 +691,97 @@
         \vspace{0.2cm}
         \item \textbf{Erklärbarkeit \& Governance:} Essenziell für regulierte Bereiche
     \end{enumerate}
-    \vspace{0.3cm}
-    \begin{block}{Literaturempfehlung}
-        Géron, A. (2022). \textit{Hands-On Machine Learning with Scikit-Learn, Keras, and TensorFlow}. O'Reilly. \cite{geron2022hands}
-    \end{block}
 \end{frame}
 
 \begin{frame}[allowframebreaks]
     \frametitle{Literatur}
     \printbibliography[heading=none]
+\end{frame}
+
+%===============================================================================
+\appendix
+\section{Generative AI}
+%===============================================================================
+
+\begin{frame}
+    \frametitle{Generative AI: Die neue Dimension}
+    \begin{columns}
+        \begin{column}{0.48\textwidth}
+            \begin{block}{Was ist Generative AI?}
+                Modelle, die \textbf{neue Inhalte} erzeugen:
+                \begin{itemize}
+                    \item Text (LLMs wie GPT, Claude)
+                    \item Bilder (DALL-E, Midjourney)
+                    \item Code (GitHub Copilot)
+                    \item Audio/Video
+                \end{itemize}
+            \end{block}
+            \vspace{0.2cm}
+            \begin{block}{Technische Basis}
+                \begin{itemize}
+                    \item \textbf{Transformer-Architektur}
+                    \item Milliarden von Parametern
+                    \item Training auf riesigen Textkorpora
+                \end{itemize}
+            \end{block}
+        \end{column}
+        \begin{column}{0.48\textwidth}
+            \begin{alertblock}{Risiken für Finanzaufsicht}
+                \begin{itemize}
+                    \item \textbf{Halluzinationen:} Plausible aber falsche Aussagen
+                    \item \textbf{Bias:} Vorurteile aus Trainingsdaten
+                    \item \textbf{Datenschutz:} Sensible Daten im Prompt
+                    \item \textbf{Nachvollziehbarkeit:} Schwer erklärbar
+                \end{itemize}
+            \end{alertblock}
+            \vspace{0.2cm}
+            \begin{exampleblock}{Anwendungen im AML}
+                \begin{itemize}
+                    \item SAR-Narrative generieren
+                    \item Dokumentenanalyse
+                    \item Recherche-Unterstützung
+                \end{itemize}
+            \end{exampleblock}
+        \end{column}
+    \end{columns}
+\end{frame}
+
+\begin{frame}
+    \frametitle{LLMs in der Praxis: Chancen \& Herausforderungen}
+    \begin{columns}
+        \begin{column}{0.48\textwidth}
+            \begin{block}{Einsatzmöglichkeiten}
+                \begin{itemize}
+                    \item \textbf{Zusammenfassungen:} Lange Dokumente aufbereiten
+                    \item \textbf{Übersetzung:} Mehrsprachige Compliance
+                    \item \textbf{Klassifikation:} Beschwerden kategorisieren
+                    \item \textbf{Q\&A:} Interne Wissensbasis durchsuchen
+                \end{itemize}
+            \end{block}
+            \vspace{0.2cm}
+            \begin{block}{Retrieval-Augmented Generation (RAG)}
+                LLM + eigene Dokumente:
+                \begin{itemize}
+                    \item Aktuelle Informationen
+                    \item Unternehmensspezifisch
+                    \item Quellenangaben möglich
+                \end{itemize}
+            \end{block}
+        \end{column}
+        \begin{column}{0.48\textwidth}
+            \begin{alertblock}{Governance-Fragen}
+                \begin{itemize}
+                    \item Welche Daten dürfen eingegeben werden?
+                    \item Wer prüft die Ausgaben?
+                    \item Wie wird dokumentiert?
+                    \item Welche Modelle sind zugelassen?
+                    \item Wie werden Updates gehandhabt?
+                \end{itemize}
+            \end{alertblock}
+            \vspace{0.2cm}
+            \textit{„Human-in-the-Loop" bleibt essenziell -- GenAI unterstützt, entscheidet aber nicht!}
+        \end{column}
+    \end{columns}
 \end{frame}
 
 \end{document}

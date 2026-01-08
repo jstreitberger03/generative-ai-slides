@@ -14,6 +14,7 @@
 % ----------------------------------------
 % Load packages
 % ----------------------------------------
+\RequirePackage[ngerman]{babel}
 \RequirePackage{adjustbox}
 \RequirePackage{booktabs}
 \RequirePackage{etoolbox}
@@ -178,30 +179,32 @@
 }
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% Color settings (Modern Palette)
+% Color settings (FMA Palette)
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\definecolor{ModernBlue}{RGB}{20,79,118}      % primary
+\definecolor{FMAOrange}{HTML}{EC6600}         % FMA primary orange
+\definecolor{FMABlue}{RGB}{20,79,118}         % secondary blue
 \definecolor{ModernGray}{RGB}{245,245,240}    % light background tint
 \definecolor{ModernGreen}{RGB}{29,141,121}    % positive / example
 \definecolor{ModernRed}{RGB}{198,92,54}       % alert/accent
 
-% Map to structure
-\setbeamercolor*{structure}{fg=ModernBlue,bg=white}
-\setbeamercolor{title}{use=structure, fg=structure.fg,bg=structure.bg}
-\setbeamercolor{framesubtitle}{use=structure,fg=ModernGray!70!black,bg=structure.bg}
-\setbeamercolor{alerted text}{fg=ModernRed}
+% Map to structure - use FMA Orange as primary
+\setbeamercolor*{structure}{fg=FMABlue,bg=white}
+\setbeamercolor{title}{fg=FMAOrange,bg=white}
+\setbeamercolor{frametitle}{fg=FMAOrange,bg=white}
+\setbeamercolor{framesubtitle}{fg=ModernGray!70!black,bg=white}
+\setbeamercolor{alerted text}{fg=FMAOrange}
 
 % Blocks
-\setbeamercolor*{block title}{fg=black, bg=ModernGray!80!ModernBlue}
+\setbeamercolor*{block title}{fg=white, bg=FMAOrange}
 \setbeamercolor{block body}{fg=black, bg=ModernGray!60!white}
-\setbeamercolor*{block title example}{fg=black, bg=ModernGray!75!ModernGreen}
+\setbeamercolor*{block title example}{fg=white, bg=ModernGreen}
 \setbeamercolor{block body example}{fg=black, bg=ModernGray!55!white}
-\setbeamercolor*{block title alerted}{fg=black, bg=ModernGray!75!ModernRed}
+\setbeamercolor*{block title alerted}{fg=white, bg=ModernRed}
 \setbeamercolor{block body alerted}{fg=black, bg=ModernGray!55!white}
 
 % Footline & Date
-\setbeamercolor{footline}{fg=ModernBlue,bg=bg}
-\setbeamercolor{date}{fg=ModernBlue!60!black,bg=white}
+\setbeamercolor{footline}{fg=FMAOrange,bg=bg}
+\setbeamercolor{date}{fg=FMAOrange!80!black,bg=white}
 
 % Bibliography colors
 \setbeamercolor{footnote}{fg=ModernGray!70!black,bg=white}
@@ -331,7 +334,7 @@
 \setlength{\footnotesep}{0.4cm}
 \renewcommand{\finalnamedelim}{\addcomma \addspace}
 
-% redefine cite command to have author (only last name), journal, year
+% redefine cite command to have author (only last name), title, journal, year
 \renewbibmacro*{cite}{%
 	%
 	\footnote{
@@ -362,9 +365,10 @@
 				\setunit{\printdelim{nameyeardelim}}}%
 		}
 		%
-		% After the label, add a colon and a space (\addcolon\space) and 
-		% use the journal macro to print the journal name.
-		\setunit{\addcolon \addthinspace}%
+		% After the label, add a colon and print the title
+		\setunit{\addcolon \addspace}%
+		\printfield{title}%
+		\setunit{\addperiod \addspace}%
 		\ifentrytype{article}
 		{
 			\usebibmacro{journal}%
@@ -373,7 +377,7 @@
 		}{}% Volume number
 		\ifentrytype{book}
 		{
-			\printfield{series}% If no journal title, print series (for books)
+			\printfield{publisher}% Publisher for books
 		}{}
 		% add eprint if it is a preprint
 		\iffieldundef{eprint}{}{\usebibmacro{eprint}}

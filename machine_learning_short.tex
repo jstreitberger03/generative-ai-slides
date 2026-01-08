@@ -8,7 +8,7 @@
 % biblatex already loaded by beamerthemeModern.sty with literature.bib
 
 \title{Maschinelles Lernen}
-\subtitle{Eine kurze Einführung für JuristInnen}
+\subtitle{Eine kurze Einführung}
 \author{Julian Streitberger (FMA -- Abteilung IV/4)}
 \date{\today}
 
@@ -29,19 +29,19 @@
             \end{block}
             \vspace{0.4cm}
             \textbf{Traditionelle Programmierung:}\\
-            Mensch schreibt Regeln $\rightarrow$ Computer führt aus
+            Mensch schreibt Regeln $\Rightarrow$ Computer führt aus
             \vspace{0.3cm}
             
             \textbf{Maschinelles Lernen:}\\
-            Daten + Beispiele $\rightarrow$ Computer lernt Regeln
+            Daten + Beispiele $\Rightarrow$ Computer lernt Regeln
         \end{column}
         \begin{column}{0.42\textwidth}
             \begin{exampleblock}{Beispiel: Geldwäsche}
                 \textbf{Regelbasiert:}\\
-                „Melde alle TX $>$ \texteuro 10.000"
+                „Melde alle Transaktionen über 10.000 \texteuro"
                 \vspace{0.2cm}
                 
-                \textbf{ML-basiert:}\\
+                \textbf{Machine Learning-basiert:}\\
                 System erkennt verdächtige Muster aus historischen Fällen -- auch \textit{unbekannte}.
             \end{exampleblock}
         \end{column}
@@ -81,6 +81,88 @@
 \end{frame}
 
 %===============================================================================
+% FOLIE 2b: Instanzbasiert vs. Modellbasiert
+%===============================================================================
+
+\begin{frame}
+    \frametitle{Zwei Ansätze: Instanzbasiert vs. Modellbasiert}
+    \begin{center}
+        \includegraphics[width=0.85\linewidth]{plots/instance_vs_model.pdf}
+    \end{center}
+    \begin{columns}
+        \begin{column}{0.48\textwidth}
+            \begin{block}{Instanzbasiertes Lernen}
+                \begin{itemize}
+                    \item Speichert \textbf{alle Trainingsdaten}
+                    \item Vergleicht neue Fälle mit ähnlichen
+                    \item \textit{Bsp: k-Nearest Neighbors}
+                \end{itemize}
+            \end{block}
+        \end{column}
+        \begin{column}{0.48\textwidth}
+            \begin{block}{Modellbasiertes Lernen}
+                \begin{itemize}
+                    \item Lernt \textbf{allgemeine Regeln} (Parameter)
+                    \item Kompaktes Modell, schnelle Vorhersage
+                    \item \textit{Bsp: Decision Trees, Regression}
+                \end{itemize}
+            \end{block}
+        \end{column}
+    \end{columns}
+\end{frame}
+
+%===============================================================================
+% FOLIE 2c: Wichtige Algorithmen
+%===============================================================================
+
+\begin{frame}
+    \frametitle{Wichtige Algorithmen im Überblick}
+    \begin{columns}[t]
+        \begin{column}{0.32\textwidth}
+            \begin{block}{\centering Klassifikation}
+                \textbf{Decision Tree}\\
+                {\small Ja/Nein-Fragen, erklärbar}\\[0.1cm]
+                \textbf{Random Forest}\\
+                {\small Viele Bäume $\rightarrow$ robust}\\[0.1cm]
+                \textbf{Gradient Boosting}\\
+                {\small State-of-the-Art für Tabellen}\\[0.1cm]
+                \textbf{$k$-nearest neighbor (instanzbasiert)}\\
+                {\small Vergleich mit ähnlichen Fällen}
+                \vspace{0.2cm}
+                
+                \textit{\scriptsize Use Case: Alert-Scoring, SAR-Priorisierung}
+            \end{block}
+        \end{column}
+        \begin{column}{0.32\textwidth}
+            \begin{block}{\centering Anomalieerkennung}
+                \textbf{Isolation Forest}\\
+                {\small Findet Ausreißer}\\[0.1cm]
+                \textbf{Autoencoder}\\
+                {\small Lernt „Normalität"}\\[0.1cm]
+                \textbf{One-Class SVM}\\
+                {\small Grenze um normale Daten}
+                \vspace{0.2cm}
+                
+                \textit{\scriptsize Use Case: Unbekannte Betrugsmuster}
+            \end{block}
+        \end{column}
+        \begin{column}{0.32\textwidth}
+            \begin{block}{\centering Clustering \& Text}
+                \textbf{k-Means clustering}\\
+                {\small Gruppiert ähnliche Fälle (oft für Kundendaten)}\\[0.1cm]
+                \textbf{NLP / Transformers}\\
+                {\small Textanalyse, Named entity recognition}\\[0.1cm]
+                \textbf{LLMs}\\
+                {\small SARs, Recherche}
+                \vspace{0.2cm}
+                
+                \textit{\scriptsize Use Case: Segmentierung, Screening}
+            \end{block}
+        \end{column}
+    \end{columns}
+\end{frame}
+
+%===============================================================================
 % FOLIE 3: Das Problem Overfitting
 %===============================================================================
 
@@ -100,9 +182,9 @@
 %===============================================================================
 
 \begin{frame}
-    \frametitle{Wie gut ist ein Modell? -- Precision \& Recall}
+    \frametitle{Wie gut ist ein Modell? -- Precision, Recall \& F1}
     \begin{columns}
-        \begin{column}{0.55\textwidth}
+        \begin{column}{0.58\textwidth}
             \textbf{Das Dilemma bei seltenen Ereignissen:}
             \begin{itemize}
                 \item Geldwäsche: $<$1\% aller Transaktionen
@@ -113,14 +195,19 @@
             \begin{itemize}
                 \item \textbf{Precision:} Wie viele Alarme sind echte Treffer?
                 \item \textbf{Recall:} Wie viele echte Fälle wurden gefunden?
+                \item \textbf{F1-Score:} Harmonisches Mittel aus beiden
             \end{itemize}
+            \vspace{0.2cm}
+            \[
+                F_1 = 2 \, \frac{\textup{Precision} \cdot \textup{Recall}}{\textup{Precision} + \textup{Recall}}
+            \]
         \end{column}
-        \begin{column}{0.42\textwidth}
+        \begin{column}{0.38\textwidth}
             \begin{alertblock}{Abwägung}
                 \textbf{Hoher Recall:}\\
-                Weniger übersehene Fälle\\
-                {\small (regulatorisch wichtig!)}
-                \vspace{0.2cm}
+                Weniger übersehen\\
+                {\small (regulatorisch!)}
+                \vspace{0.15cm}
                 
                 \textbf{Hohe Precision:}\\
                 Weniger Fehlalarme\\
@@ -135,7 +222,7 @@
 %===============================================================================
 
 \begin{frame}
-    \frametitle{Fragen für Vor-Ort-PrüferInnen}
+    \frametitle{Mögliche Fragen für Vor-Ort-Prüfungen}
     \begin{columns}
         \begin{column}{0.48\textwidth}
             \begin{block}{Zur Modellentwicklung}
@@ -180,20 +267,18 @@
 \begin{frame}
     \frametitle{Zusammenfassung}
     \begin{enumerate}
-        \item \textbf{ML lernt aus Daten} -- keine explizite Programmierung nötig
-        \vspace{0.3cm}
+        \item \textbf{Machine Learning lernt aus Daten} -- keine explizite Programmierung nötig
+        \vspace{0.2cm}
         \item \textbf{Überwacht vs. Unüberwacht:} Mit oder ohne Beispiellösungen
-        \vspace{0.3cm}
+        \vspace{0.2cm}
+        \item \textbf{Instanz- vs. Modellbasiert:} Vergleich mit ähnlichen Fällen vs. allgemeine Regeln
+        \vspace{0.2cm}
         \item \textbf{Overfitting vermeiden:} Das Modell soll generalisieren können
-        \vspace{0.3cm}
-        \item \textbf{Precision \& Recall:} Wichtiger als reine Trefferquote
-        \vspace{0.3cm}
+        \vspace{0.2cm}
+        \item \textbf{Precision, Recall \& F1:} Wichtiger als reine Trefferquote
+        \vspace{0.2cm}
         \item \textbf{Governance \& Erklärbarkeit:} Essenziell für regulierte Bereiche
     \end{enumerate}
-    \vspace{0.4cm}
-    \begin{block}{Literaturempfehlung}
-        Géron, A. (2022). \textit{Hands-On Machine Learning}. O'Reilly. \cite{geron2022hands}
-    \end{block}
 \end{frame}
 
 \begin{frame}[allowframebreaks]

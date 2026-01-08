@@ -7,6 +7,10 @@ from sklearn.preprocessing import PolynomialFeatures
 from sklearn.linear_model import LinearRegression
 from sklearn.pipeline import make_pipeline
 
+# FMA Colors
+FMA_ORANGE = '#EC6600'
+FMA_BLUE = '#144F76'
+
 # Generate data
 np.random.seed(42)
 n_samples = 30
@@ -21,16 +25,16 @@ X_train = X.reshape(-1, 1)
 
 titles = ['Underfitting\n(Hoher Bias)', 'Gute Anpassung', 'Overfitting\n(Hohe Varianz)']
 degrees = [1, 4, 15]
-colors = ['#E74C3C', '#27AE60', '#E74C3C']
+colors = [FMA_ORANGE, '#27AE60', FMA_ORANGE]
 
 for ax, degree, title, color in zip(axes, degrees, titles, colors):
     model = make_pipeline(PolynomialFeatures(degree), LinearRegression())
     model.fit(X_train, y)
     y_plot = model.predict(X_plot)
     
-    ax.scatter(X, y, color='#3498DB', s=40, alpha=0.7, label='Daten', zorder=5)
+    ax.scatter(X, y, color=FMA_BLUE, s=40, alpha=0.7, label='Daten', zorder=5)
     ax.plot(X_plot, y_plot, color=color, linewidth=2.5, label=f'Modell (Grad {degree})')
-    ax.set_title(title, fontsize=12, fontweight='bold')
+    ax.set_title(title, fontsize=12, fontweight='bold', color=FMA_ORANGE)
     ax.set_xlabel('Feature X')
     ax.set_ylabel('Zielvariable Y')
     ax.set_xlim(-0.5, 10.5)
