@@ -19,11 +19,13 @@ X_class1 = np.random.randn(n, 2) + np.array([3, 3])
 X = np.vstack([X_class0, X_class1])
 y = np.array([0]*n + [1]*n)
 
-fig, axes = plt.subplots(1, 2, figsize=(10, 4))
+fig, axes = plt.subplots(1, 2, figsize=(10, 4.5))
 
-# Create mesh for decision boundary
-x_min, x_max = X[:, 0].min() - 1, X[:, 0].max() + 1
-y_min, y_max = X[:, 1].min() - 1, X[:, 1].max() + 1
+# Create mesh for decision boundary - use same range for both axes to keep circles round
+data_min = min(X[:, 0].min(), X[:, 1].min()) - 1.5
+data_max = max(X[:, 0].max(), X[:, 1].max()) + 1.5
+x_min, x_max = data_min, data_max
+y_min, y_max = data_min, data_max
 xx, yy = np.meshgrid(np.linspace(x_min, x_max, 200),
                      np.linspace(y_min, y_max, 200))
 
@@ -64,6 +66,9 @@ ax.set_xlabel('Feature 1')
 ax.set_ylabel('Feature 2')
 ax.legend(loc='upper left', fontsize=8)
 ax.grid(True, alpha=0.3)
+ax.set_xlim(x_min, x_max)
+ax.set_ylim(y_min, y_max)
+ax.set_aspect('equal', adjustable='box')
 
 # Model-based: Logistic Regression
 ax = axes[1]
@@ -91,6 +96,7 @@ ax.legend(loc='upper left', fontsize=8)
 ax.grid(True, alpha=0.3)
 ax.set_xlim(x_min, x_max)
 ax.set_ylim(y_min, y_max)
+ax.set_aspect('equal', adjustable='box')
 
 plt.tight_layout()
 plt.savefig('instance_vs_model.pdf', bbox_inches='tight', dpi=150)

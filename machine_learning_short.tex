@@ -118,7 +118,7 @@
 \begin{frame}
     \frametitle{Wichtige Algorithmen: Klassifikation}
     \begin{center}
-        \includegraphics[width=0.72\linewidth]{plots/algorithm_comparison.pdf}
+        \includegraphics[height=0.68\textheight]{plots/algorithm_comparison.pdf}
     \end{center}
     \vspace{-0.2cm}
     \textit{\small Use Case: Alert-Scoring, SAR-Priorisierung, Risiko-Klassifikation}
@@ -131,63 +131,13 @@
 \begin{frame}
     \frametitle{Wichtige Algorithmen: Anomalieerkennung \& Clustering}
     \begin{center}
-        \includegraphics[width=0.82\linewidth]{plots/anomaly_clustering.pdf}
+        \includegraphics[height=0.52\textheight]{plots/anomaly_clustering.pdf}
     \end{center}
     \vspace{-0.1cm}
     \begin{alertblock}{Praxis-Tipp}
         Für \textbf{tabellarische Daten} (Transaktionen): Gradient Boosting. Für \textbf{Text}: NLP/LLMs.
     \end{alertblock}
 \end{frame}
-
-% Placeholder to preserve structure
-\iffalse
-\begin{frame}
-    \frametitle{Wichtige Algorithmen im Überblick -- OLD}
-    \begin{columns}[t]
-        \begin{column}{0.32\textwidth}
-            \begin{block}{\centering Klassifikation}
-                \textbf{Decision Tree}\\
-                {\small Ja/Nein-Fragen, erklärbar}\\[0.1cm]
-                \textbf{Random Forest}\\
-                {\small Viele Bäume $\rightarrow$ robust}\\[0.1cm]
-                \textbf{Gradient Boosting}\\
-                {\small State-of-the-Art für Tabellen}\\[0.1cm]
-                \textbf{$k$-nearest neighbor (instanzbasiert)}\\
-                {\small Vergleich mit ähnlichen Fällen}
-                \vspace{0.2cm}
-                
-                \textit{\scriptsize Use Case: Alert-Scoring, SAR-Priorisierung}
-            \end{block}
-        \end{column}
-        \begin{column}{0.32\textwidth}
-            \begin{block}{\centering Anomalieerkennung}
-                \textbf{Isolation Forest}\\
-                {\small Findet Ausreißer}\\[0.1cm]
-                \textbf{Autoencoder}\\
-                {\small Lernt \glqq Normalität\grqq}\\[0.1cm]
-                \textbf{One-Class SVM}\\
-                {\small Grenze um normale Daten}
-                \vspace{0.2cm}
-                
-                \textit{\scriptsize Use Case: Unbekannte Betrugsmuster}
-            \end{block}
-        \end{column}
-        \begin{column}{0.32\textwidth}
-            \begin{block}{\centering Clustering \& Text}
-                \textbf{k-Means clustering}\\
-                {\small Gruppiert ähnliche Fälle (oft für Kundendaten)}\\[0.1cm]
-                \textbf{NLP / Transformers}\\
-                {\small Textanalyse, Named entity recognition}\\[0.1cm]
-                \textbf{LLMs}\\
-                {\small SARs, Recherche}
-                \vspace{0.2cm}
-                
-                \textit{\scriptsize Use Case: Segmentierung, Screening}
-            \end{block}
-        \end{column}
-    \end{columns}
-\end{frame}
-\fi
 
 %===============================================================================
 % FOLIE 3: Das Problem Overfitting
@@ -309,12 +259,12 @@
 \end{frame}
 
 \begin{frame}[allowframebreaks]
-    \frametitle{Literatur \& Weiterführende Ressourcen}
+    \frametitle{Literatur \& weiterführende Ressourcen}
     \begin{columns}[t]
         \begin{column}{0.48\textwidth}
             \begin{block}{Einführung}
                 \begin{itemize}
-                    \item \textbf{Géron} (2022): Hands-On ML -- Praxisorientiert
+                    \item \textbf{Géron} (2026): Hands-On ML -- Praxisorientiert
                     \item \textbf{Bishop} (2006): Pattern Recognition -- Klassiker
                     \item \textbf{Murphy} (2012): ML Probabilistic -- Tiefgehend
                 \end{itemize}

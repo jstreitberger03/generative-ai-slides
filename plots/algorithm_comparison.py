@@ -38,7 +38,7 @@ xx, yy = np.meshgrid(np.linspace(x_min, x_max, 200),
 classifiers = [
     ('Decision Tree\n(Einzelner Baum, neigt zu Overfitting)', 
      DecisionTreeClassifier(max_depth=5, random_state=42)),
-    ('Random Forest\n(Mehrere Bäume → robuster)', 
+    ('Random Forest\n(Mehrere Bäume und damit robuster)', 
      RandomForestClassifier(n_estimators=50, max_depth=4, random_state=42)),
     ('Gradient Boosting\n(Sequentiell, State-of-the-Art)', 
      GradientBoostingClassifier(n_estimators=50, max_depth=3, random_state=42)),
