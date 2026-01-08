@@ -1,10 +1,10 @@
 \documentclass[11pt, aspectratio=169]{beamer}
 \usetheme{Modern}
 \usepackage{pgfplots}
-
 \usepackage{amssymb}
+\usepackage{booktabs}
 
-\title{Einführung in Maschinelles Lernen}
+\title{Maschinelles Lernen}
 \subtitle{Eine kurze Einführung für JuristInnen}
 \author{Julian Streitberger (FMA -- Abteilung IV/4)}
 \date{\today}
@@ -13,13 +13,8 @@
 
 \maketitle
 
-\begin{frame}
-    \frametitle{Agenda}
-    \tableofcontents
-\end{frame}
-
 %===============================================================================
-\section{Grundkonzepte}
+% FOLIE 1: Was ist ML?
 %===============================================================================
 
 \begin{frame}
@@ -29,386 +24,172 @@
             \begin{block}{Kernidee}
                 Statt Regeln manuell zu programmieren, lernt der Computer die Regeln \textbf{aus Daten}.
             \end{block}
+            \vspace{0.4cm}
+            \textbf{Traditionelle Programmierung:}\\
+            Mensch schreibt Regeln $\rightarrow$ Computer führt aus
             \vspace{0.3cm}
-            \textbf{Traditionell:}\\
-            Programmierer $\rightarrow$ Regeln $\rightarrow$ Computer
-            \vspace{0.2cm}
             
-            \textbf{ML:}\\
-            Daten + Ergebnisse $\rightarrow$ Computer $\rightarrow$ Regeln
+            \textbf{Maschinelles Lernen:}\\
+            Daten + Beispiele $\rightarrow$ Computer lernt Regeln
         \end{column}
         \begin{column}{0.42\textwidth}
-            \begin{exampleblock}{AML-Beispiel}
+            \begin{exampleblock}{Beispiel: Geldwäsche}
                 \textbf{Regelbasiert:}\\
-                „Melde alle TX $>$ \texteuro 10.000 in Hochrisikoländer"
+                „Melde alle TX $>$ \texteuro 10.000"
                 \vspace{0.2cm}
                 
                 \textbf{ML-basiert:}\\
-                System erkennt verdächtige Muster aus historischen SAR-Fällen -- auch \textit{unbekannte}.
+                System erkennt verdächtige Muster aus historischen Fällen -- auch \textit{unbekannte}.
             \end{exampleblock}
         \end{column}
     \end{columns}
 \end{frame}
 
+%===============================================================================
+% FOLIE 2: Zwei Lernarten
+%===============================================================================
+
 \begin{frame}
-    \frametitle{Taxonomie: Überwacht vs. Unüberwacht}
-    \begin{center}
-        \includegraphics[width=0.85\linewidth]{plots/supervised_vs_unsupervised.pdf}
-    \end{center}
+    \frametitle{Zwei Lernarten: Überwacht vs. Unüberwacht}
     \begin{columns}
         \begin{column}{0.48\textwidth}
-            \begin{block}{Überwacht (Supervised)}
+            \begin{block}{Überwachtes Lernen (Supervised)}
                 \begin{itemize}
-                    \item Training mit \textbf{gelabelten} Daten
-                    \item Ziel: Vorhersage für neue Fälle
-                    \item \textit{Bsp: Alert-Klassifikation}
+                    \item Computer lernt aus \textbf{Beispielen mit Lösung}
+                    \item Wie ein Student mit Musterlösungen
+                    \item \textit{Bsp: „Diese 1000 Fälle waren Betrug, diese 9000 nicht"}
                 \end{itemize}
+                \vspace{0.2cm}
+                \textbf{Anwendung:} Alert-Klassifikation, Risiko-Scoring
             \end{block}
         \end{column}
         \begin{column}{0.48\textwidth}
-            \begin{block}{Unüberwacht (Unsupervised)}
+            \begin{block}{Unüberwachtes Lernen (Unsupervised)}
                 \begin{itemize}
-                    \item Training \textbf{ohne Labels}
-                    \item Ziel: Strukturen entdecken
-                    \item \textit{Bsp: Kundensegmentierung}
+                    \item Computer findet \textbf{selbst Muster}
+                    \item Wie ein Detektiv ohne Hinweise
+                    \item \textit{Bsp: „Gruppiere ähnliche Kunden"}
                 \end{itemize}
+                \vspace{0.2cm}
+                \textbf{Anwendung:} Kundensegmentierung, Anomalieerkennung
             \end{block}
         \end{column}
     \end{columns}
 \end{frame}
 
-\begin{frame}
-    \frametitle{Taxonomie: Instanzbasiert vs. Modellbasiert}
-    \begin{center}
-        \includegraphics[width=0.85\linewidth]{plots/instance_vs_model.pdf}
-    \end{center}
-    \begin{columns}
-        \begin{column}{0.48\textwidth}
-            \begin{block}{Instanzbasiert}
-                \begin{itemize}
-                    \item Speichert alle Trainingsdaten
-                    \item Vergleicht neue Fälle mit Ähnlichen
-                    \item \textit{Bsp: k-Nearest Neighbors}
-                \end{itemize}
-            \end{block}
-        \end{column}
-        \begin{column}{0.48\textwidth}
-            \begin{block}{Modellbasiert}
-                \begin{itemize}
-                    \item Lernt Parameter ($\theta$) aus Daten
-                    \item Kompaktes Modell, schnelle Vorhersage
-                    \item \textit{Bsp: Logistische Regression}
-                \end{itemize}
-            \end{block}
-        \end{column}
-    \end{columns}
-\end{frame}
+%===============================================================================
+% FOLIE 3: Das Problem Overfitting
+%===============================================================================
 
 \begin{frame}
-    \frametitle{Das fundamentale Problem: Generalisierung}
+    \frametitle{Das zentrale Problem: Overfitting}
     \begin{center}
-        \includegraphics[width=0.95\linewidth]{plots/overfitting_visualization.pdf}
+        \includegraphics[width=0.85\linewidth]{plots/overfitting_visualization.pdf}
     \end{center}
-    \vspace{-0.2cm}
-    \begin{alertblock}{Ziel des ML}
-        Das Modell soll auf \textbf{neuen, ungesehenen Daten} gut funktionieren -- nicht nur auf den Trainingsdaten!
+    \begin{alertblock}{Juristische Analogie}
+        \textbf{Overfitting} = Das Modell „lernt den Fall auswendig" statt das Prinzip zu verstehen.\\
+        Wie ein Jurist, der nur die Urteile kennt, aber nicht die dahinterliegenden Rechtsgrundsätze.
     \end{alertblock}
 \end{frame}
 
 %===============================================================================
-\section{Wichtige Algorithmen}
+% FOLIE 4: Metriken
 %===============================================================================
 
 \begin{frame}
-    \frametitle{Übersicht: Wichtige ML-Algorithmen}
-    \begin{table}
-        \centering
-        \small
-        \begin{tabular}{@{}llll@{}}
-            \toprule
-            \textbf{Algorithmus} & \textbf{Typ} & \textbf{Stärke} & \textbf{AML-Anwendung} \\
-            \midrule
-            Log. Regression & Supervised & Interpretierbar & Risiko-Scores \\
-            Decision Tree & Supervised & Erklärbar & Regelableitung \\
-            Random Forest & Supervised & Robust & Alert-Klassifikation \\
-            Gradient Boosting & Supervised & Beste Accuracy & SAR-Priorisierung \\
-            k-Means & Unsupervised & Einfach & Segmentierung \\
-            Isolation Forest & Unsupervised & Anomalien & Outlier Detection \\
-            \bottomrule
-        \end{tabular}
-    \end{table}
-    \vspace{0.3cm}
-    \begin{alertblock}{Praxis-Tipp}
-        Für \textbf{tabellarische Daten} (Transaktionen) ist Gradient Boosting (XGBoost, LightGBM) oft am besten. Für \textbf{Text/Bilder} Deep Learning.
-    \end{alertblock}
-\end{frame}
-
-\begin{frame}
-    \frametitle{k-Nearest Neighbors: Ähnlichkeitsbasierte Klassifikation}
-    \begin{columns}
-        \begin{column}{0.48\textwidth}
-            \begin{itemize}
-                \item \textbf{Idee:} Klassifiziere nach den $k$ ähnlichsten Fällen
-                \item \textbf{Distanz:} z.B. Euklidisch
-                \item \textbf{Vorteil:} Keine Annahmen über Daten
-                \item \textbf{Nachteil:} Langsam bei vielen Daten
-            \end{itemize}
-            \vspace{0.3cm}
-            \begin{exampleblock}{AML}
-                Ist diese Transaktion ähnlich zu bekannten Betrugsfällen?
-            \end{exampleblock}
-        \end{column}
-        \begin{column}{0.50\textwidth}
-            \centering
-            \includegraphics[width=\linewidth]{plots/knn_decision_boundary.pdf}
-        \end{column}
-    \end{columns}
-\end{frame}
-
-\begin{frame}
-    \frametitle{k-Means Clustering: Segmentierung ohne Labels}
-    \begin{columns}
-        \begin{column}{0.48\textwidth}
-            \begin{itemize}
-                \item \textbf{Idee:} Teile Daten in $k$ Gruppen
-                \item \textbf{Algorithmus:} Iterative Zentroid-Anpassung
-                \item \textbf{Nutzen:} Entdecke natürliche Gruppen
-            \end{itemize}
-            \vspace{0.3cm}
-            \begin{exampleblock}{AML-Nutzen}
-                \begin{itemize}
-                    \item Kundensegmentierung
-                    \item Peer-Group-Analyse
-                    \item Segment-spezifische Schwellenwerte
-                \end{itemize}
-            \end{exampleblock}
-        \end{column}
-        \begin{column}{0.50\textwidth}
-            \centering
-            \includegraphics[width=\linewidth]{plots/kmeans_voronoi.pdf}
-        \end{column}
-    \end{columns}
-\end{frame}
-
-%===============================================================================
-\section{Evaluation \& Metriken}
-%===============================================================================
-
-\begin{frame}
-    \frametitle{Warum Accuracy nicht ausreicht}
+    \frametitle{Wie gut ist ein Modell? -- Precision \& Recall}
     \begin{columns}
         \begin{column}{0.55\textwidth}
-            \textbf{Problem: Unbalancierte Daten}
+            \textbf{Das Dilemma bei seltenen Ereignissen:}
             \begin{itemize}
-                \item AML: $<$1\% verdächtige Transaktionen
-                \item Ein Modell, das \textit{immer} „normal" sagt, hat 99\% Accuracy!
+                \item Geldwäsche: $<$1\% aller Transaktionen
+                \item Ein Modell, das \textit{immer} „unbedenklich" sagt, hat 99\% Trefferquote!
             \end{itemize}
             \vspace{0.3cm}
-            \textbf{Bessere Metriken:}
+            \textbf{Bessere Maßstäbe:}
             \begin{itemize}
-                \item \textbf{Precision:} Wie viele Alarme sind echt?
-                \item \textbf{Recall:} Wie viele Betrugsfälle gefunden?
-                \item \textbf{F1-Score:} Balance beider
+                \item \textbf{Precision:} Wie viele Alarme sind echte Treffer?
+                \item \textbf{Recall:} Wie viele echte Fälle wurden gefunden?
             \end{itemize}
-        \end{column}
-        \begin{column}{0.43\textwidth}
-            \begin{alertblock}{AML-Abwägung}
-                \textbf{Hoher Recall} = weniger übersehene Fälle\\
-                (regulatorisch wichtig!)
-                \vspace{0.2cm}
-                
-                \textbf{Hohe Precision} = weniger Fehlalarme\\
-                (Effizienz)
-                \vspace{0.2cm}
-                
-                $\rightarrow$ Schwellenwert je nach Risiko-Appetit wählen
-            \end{alertblock}
-        \end{column}
-    \end{columns}
-\end{frame}
-
-\begin{frame}
-    \frametitle{Konfusionsmatrix \& Precision-Recall}
-    \begin{center}
-        \includegraphics[width=0.9\linewidth]{plots/precision_recall.pdf}
-    \end{center}
-    \vspace{-0.2cm}
-    \[
-        \text{Precision} = \frac{TP}{TP + FP} \qquad
-        \text{Recall} = \frac{TP}{TP + FN} \qquad
-        F_1 = 2 \, \frac{P \, R}{P + R}
-    \]
-\end{frame}
-
-\begin{frame}
-    \frametitle{Train/Validation/Test: Das Daten-Dreieck}
-    \begin{columns}
-        \begin{column}{0.55\textwidth}
-            \begin{enumerate}
-                \item \textbf{Training Set (60-70\%)}\\
-                      Modell lernt daraus
-                \item \textbf{Validation Set (15-20\%)}\\
-                      Hyperparameter-Tuning
-                \item \textbf{Test Set (15-20\%)}\\
-                      Finale, unberührte Evaluation
-            \end{enumerate}
-            \vspace{0.3cm}
-            \begin{alertblock}{Goldene Regel}
-                Das Test Set darf \textbf{niemals} für Modellentscheidungen genutzt werden!
-            \end{alertblock}
         \end{column}
         \begin{column}{0.42\textwidth}
-            \begin{block}{Cross-Validation}
-                Bei wenig Daten: K-Fold CV
-                \begin{itemize}
-                    \item Teile in $k$ Teile
-                    \item Trainiere $k$ mal
-                    \item Mittle Ergebnisse
-                \end{itemize}
-                $\rightarrow$ Robustere Schätzung
-            \end{block}
+            \begin{alertblock}{Abwägung}
+                \textbf{Hoher Recall:}\\
+                Weniger übersehene Fälle\\
+                {\small (regulatorisch wichtig!)}
+                \vspace{0.2cm}
+                
+                \textbf{Hohe Precision:}\\
+                Weniger Fehlalarme\\
+                {\small (Effizienz)}
+            \end{alertblock}
         \end{column}
     \end{columns}
 \end{frame}
 
 %===============================================================================
-\section{ML für Banken \& Aufsicht}
+% FOLIE 5: Fragen für Prüfer
 %===============================================================================
-
-\begin{frame}
-    \frametitle{Was könnten Banken implementieren?}
-    \begin{columns}
-        \begin{column}{0.48\textwidth}
-            \begin{block}{Transaction Monitoring}
-                \begin{itemize}
-                    \item ML-Scoring für Alerts
-                    \item Anomalieerkennung
-                    \item Peer-Group-Analyse
-                \end{itemize}
-            \end{block}
-            \vspace{0.2cm}
-            \begin{block}{Sanctions Screening}
-                \begin{itemize}
-                    \item NLP für Namensabgleich
-                    \item False-Positive-Reduktion
-                    \item Entity Resolution
-                \end{itemize}
-            \end{block}
-        \end{column}
-        \begin{column}{0.48\textwidth}
-            \begin{block}{Customer Risk Rating}
-                \begin{itemize}
-                    \item Automatisierte Risikobewertung
-                    \item Dynamische Anpassung
-                    \item Feature-basiertes Scoring
-                \end{itemize}
-            \end{block}
-            \vspace{0.2cm}
-            \begin{block}{Investigation Support}
-                \begin{itemize}
-                    \item LLM für SAR-Narrative
-                    \item Automatische Zusammenfassungen
-                    \item Dokumentenanalyse
-                \end{itemize}
-            \end{block}
-        \end{column}
-    \end{columns}
-\end{frame}
 
 \begin{frame}
     \frametitle{Fragen für Vor-Ort-PrüferInnen}
     \begin{columns}
         \begin{column}{0.48\textwidth}
-            \begin{block}{Modellentwicklung}
+            \begin{block}{Zur Modellentwicklung}
                 \begin{itemize}
-                    \item Welche \textbf{Daten} wurden für das Training verwendet?
-                    \item Wie wurde \textbf{Overfitting} verhindert?
-                    \item Welche \textbf{Features} nutzt das Modell?
-                    \item Gibt es eine \textbf{Baseline} zum Vergleich?
+                    \item Mit welchen \textbf{Daten} wurde trainiert?
+                    \item Wurde auf \textbf{Overfitting} getestet?
+                    \item Welche \textbf{Faktoren} fließen ein?
                 \end{itemize}
             \end{block}
             \vspace{0.2cm}
-            \begin{block}{Validierung}
+            \begin{block}{Zur Validierung}
                 \begin{itemize}
-                    \item Welche \textbf{Metriken} werden verwendet?
-                    \item Wie oft wird das Modell \textbf{re-validiert}?
-                    \item Gibt es \textbf{Out-of-Time}-Tests?
+                    \item Welche \textbf{Metriken} werden gemessen?
+                    \item Wie oft wird \textbf{überprüft}?
                 \end{itemize}
             \end{block}
         \end{column}
         \begin{column}{0.48\textwidth}
-            \begin{block}{Governance \& Erklärbarkeit}
+            \begin{block}{Zur Governance}
                 \begin{itemize}
-                    \item Wer ist für das Modell \textbf{verantwortlich}?
-                    \item Ist das Modell \textbf{erklärbar}? (SHAP, Feature Importance)
+                    \item Wer ist \textbf{verantwortlich}?
+                    \item Ist das Modell \textbf{erklärbar}?
                     \item Wie werden \textbf{Änderungen} dokumentiert?
                 \end{itemize}
             \end{block}
             \vspace{0.2cm}
-            \begin{block}{Monitoring \& Drift}
+            \begin{alertblock}{Red Flags}
                 \begin{itemize}
-                    \item Wird \textbf{Model Drift} überwacht?
-                    \item Was passiert bei \textbf{Performance-Einbruch}?
-                    \item Gibt es \textbf{Fallback}-Mechanismen?
-                \end{itemize}
-            \end{block}
-        \end{column}
-    \end{columns}
-\end{frame}
-
-\begin{frame}
-    \frametitle{Red Flags bei ML-Implementierungen}
-    \begin{columns}
-        \begin{column}{0.48\textwidth}
-            \begin{alertblock}{Warnsignale}
-                \begin{itemize}
-                    \item Keine klare \textbf{Dokumentation}
-                    \item Test Set wurde für Tuning genutzt
-                    \item Nur \textbf{Accuracy} als Metrik
-                    \item Kein \textbf{Monitoring} in Produktion
-                    \item „Black Box" ohne Erklärbarkeit
-                    \item Keine \textbf{Governance}-Struktur
-                    \item Modell seit Jahren nicht \textbf{re-trainiert}
+                    \item Keine Dokumentation
+                    \item Nur „Accuracy" als Metrik
+                    \item Kein regelmäßiges Re-Training
                 \end{itemize}
             \end{alertblock}
         \end{column}
-        \begin{column}{0.48\textwidth}
-            \begin{block}{Best Practices}
-                \begin{itemize}
-                    \item Klare \textbf{Model Risk Management} Policy
-                    \item Regelmäßige \textbf{Validierung} (jährlich)
-                    \item \textbf{Challenger Models} zum Vergleich
-                    \item \textbf{Human-in-the-Loop} bei kritischen Entscheidungen
-                    \item Dokumentierte \textbf{Feature-Auswahl}
-                    \item \textbf{Audit Trail} aller Änderungen
-                \end{itemize}
-            \end{block}
-        \end{column}
     \end{columns}
 \end{frame}
 
 %===============================================================================
-\section{Zusammenfassung}
+% FOLIE 6: Key Takeaways
 %===============================================================================
 
 \begin{frame}
-    \frametitle{Key Takeaways}
+    \frametitle{Zusammenfassung}
     \begin{enumerate}
-        \item \textbf{ML lernt Regeln aus Daten} -- keine explizite Programmierung
-        \vspace{0.2cm}
-        \item \textbf{Überwacht vs. Unüberwacht:} Mit oder ohne Labels
-        \vspace{0.2cm}
-        \item \textbf{Generalisierung ist das Ziel} -- Overfitting vermeiden!
-        \vspace{0.2cm}
-        \item \textbf{Accuracy reicht nicht} -- Precision, Recall, F1 betrachten
-        \vspace{0.2cm}
-        \item \textbf{Gradient Boosting} ist oft State-of-the-Art für Tabellendaten
-        \vspace{0.2cm}
-        \item \textbf{Erklärbarkeit \& Governance} sind essenziell für regulierte Bereiche
+        \item \textbf{ML lernt aus Daten} -- keine explizite Programmierung nötig
+        \vspace{0.3cm}
+        \item \textbf{Überwacht vs. Unüberwacht:} Mit oder ohne Beispiellösungen
+        \vspace{0.3cm}
+        \item \textbf{Overfitting vermeiden:} Das Modell soll generalisieren können
+        \vspace{0.3cm}
+        \item \textbf{Precision \& Recall:} Wichtiger als reine Trefferquote
+        \vspace{0.3cm}
+        \item \textbf{Governance \& Erklärbarkeit:} Essenziell für regulierte Bereiche
     \end{enumerate}
-    \vspace{0.3cm}
+    \vspace{0.4cm}
     \begin{block}{Literaturempfehlung}
-        Géron, A. (2022). \textit{Hands-On Machine Learning with Scikit-Learn, Keras, and TensorFlow}. O'Reilly. \cite{geron2022hands}
+        Géron, A. (2022). \textit{Hands-On Machine Learning}. O'Reilly. \cite{geron2022hands}
     \end{block}
 \end{frame}
 
