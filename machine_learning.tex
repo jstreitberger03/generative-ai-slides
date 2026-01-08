@@ -2,8 +2,10 @@
 \usetheme{Modern}
 \usepackage{pgfplots}
 
+\usepackage{amssymb}
+
 \title{Einführung in Maschinelles Lernen}
-\subtitle{Konzepte, Methoden und Praxisanwendungen}
+\subtitle{Eine kurze Einführung für JuristInnen}
 \author{Julian Streitberger (FMA -- Abteilung IV/4)}
 \date{\today}
 
@@ -16,314 +18,147 @@
     \tableofcontents
 \end{frame}
 
-\section{Grundlagen}
+%===============================================================================
+\section{Grundkonzepte}
+%===============================================================================
 
 \begin{frame}
-    \frametitle{Definition: Maschinelles Lernen}
-    \begin{block}{Konzept}
-        Maschinelles Lernen (ML) bezeichnet Verfahren, bei denen Algorithmen statistische Regelmäßigkeiten in Datenbeständen identifizieren, um daraus generalisierbare Modelle für Vorhersagen oder Entscheidungen abzuleiten.
-    \end{block}
-    \vspace{0.5cm}
-    \begin{itemize}
-        \item \textbf{Paradigmenwechsel:} Abkehr von expliziter Programmierung ("Wenn-Dann"-Regeln) hin zu datengetriebenem Lernen.
-        \item \textbf{Zielsetzung:} Automatisierung kognitiver Prozesse und Skalierbarkeit von Entscheidungen in komplexen Umgebungen.
-    \end{itemize}
-\end{frame}
-
-\section{Überwachtes Lernen (Supervised Learning)}
-
-\begin{frame}
-    \frametitle{Kategorie 1: Überwachtes Lernen}
+    \frametitle{Was ist Maschinelles Lernen?}
     \begin{columns}
-        \begin{column}{0.6\textwidth}
-            \begin{itemize}
-                \item \textbf{Methodik:} Training anhand eines gelabelten Datensatzes (Input $X$ + Zielvariable $Y$).
-                \item \textbf{Prozess:} Der Algorithmus approximiert die Funktion $f(X) = Y$, um für neue Datenpunkte korrekte Vorhersagen zu treffen.
-            \end{itemize}
-        \end{column}
-        \begin{column}{0.35\textwidth}
-            \begin{alertblock}{Analogie}
-                Lernen mit Musterlösungen: Das System erhält Übungsaufgaben inklusive der korrekten Antworten, um Prinzipien für die Prüfung abzuleiten.
-            \end{alertblock}
-        \end{column}
-    \end{columns}
-\end{frame}
-
-\begin{frame}
-    \frametitle{Instanzbasiertes Lernen: k-Nearest Neighbors (k-NN)}
-    \begin{itemize}
-        \item \textbf{Funktionsweise:} Klassifikation basierend auf der lokalen Nachbarschaft im Vektorraum. Ein Datenpunkt wird der Klasse zugeordnet, die unter seinen $k$ nächsten Nachbarn am häufigsten vertreten ist.
-        \item \textbf{Metrik:} Distanzmessung (z.B. Euklidische Distanz).
-    \end{itemize}
-    \vspace{0.3cm}
-    \begin{exampleblock}{Anwendung: Geldwäscheprävention (AML)}
-        \begin{itemize}
-            \item \textbf{Szenario:} Bewertung einer neuen Transaktion.
-            \item \textbf{Logik:} Weist die Transaktion in Parametern wie Volumen, Herkunft und Frequenz signifikante Ähnlichkeit zu historischen Betrugsfällen auf?
-        \end{itemize}
-    \end{exampleblock}
-\end{frame}
-
-\begin{frame}
-    \frametitle{Exkurs: Der Satz von Bayes}
-    \begin{columns}
-        \begin{column}{0.48\textwidth}
-            \begin{equation*}
-                P(A|B) = \frac{P(B|A) \cdot P(A)}{P(B)}
-            \end{equation*}
+        \begin{column}{0.55\textwidth}
+            \begin{block}{Kernidee}
+                Statt Regeln manuell zu programmieren, lernt der Computer die Regeln \textbf{aus Daten}.
+            \end{block}
+            \vspace{0.3cm}
+            \textbf{Traditionell:}\\
+            Programmierer $\rightarrow$ Regeln $\rightarrow$ Computer
             \vspace{0.2cm}
-            \small
-            \begin{description}
-                \item[$P(A|B)$:] \textbf{Posterior} \\ Wahrscheinlichkeit von $A$ gegeben $B$
-                \item[$P(B|A)$:] \textbf{Likelihood} \\ Wahrscheinlichkeit von $B$ unter $A$
-                \item[$P(A)$:] \textbf{Prior} \\ A-priori-Wahrscheinlichkeit
-                \item[$P(B)$:] \textbf{Evidence} \\ Gesamtwahrscheinlichkeit
-            \end{description}
+            
+            \textbf{ML:}\\
+            Daten + Ergebnisse $\rightarrow$ Computer $\rightarrow$ Regeln
+        \end{column}
+        \begin{column}{0.42\textwidth}
+            \begin{exampleblock}{AML-Beispiel}
+                \textbf{Regelbasiert:}\\
+                „Melde alle TX $>$ \texteuro 10.000 in Hochrisikoländer"
+                \vspace{0.2cm}
+                
+                \textbf{ML-basiert:}\\
+                System erkennt verdächtige Muster aus historischen SAR-Fällen -- auch \textit{unbekannte}.
+            \end{exampleblock}
+        \end{column}
+    \end{columns}
+\end{frame}
+
+\begin{frame}
+    \frametitle{Taxonomie: Überwacht vs. Unüberwacht}
+    \begin{center}
+        \includegraphics[width=0.85\linewidth]{plots/supervised_vs_unsupervised.pdf}
+    \end{center}
+    \begin{columns}
+        \begin{column}{0.48\textwidth}
+            \begin{block}{Überwacht (Supervised)}
+                \begin{itemize}
+                    \item Training mit \textbf{gelabelten} Daten
+                    \item Ziel: Vorhersage für neue Fälle
+                    \item \textit{Bsp: Alert-Klassifikation}
+                \end{itemize}
+            \end{block}
         \end{column}
         \begin{column}{0.48\textwidth}
-            \begin{exampleblock}{\small Beispiel: Kunde ist PEP}
-                \scriptsize
-                \textbf{Frage:} Ist Transaktion verdächtig?
+            \begin{block}{Unüberwacht (Unsupervised)}
                 \begin{itemize}
-                    \item $A$: verdächtig (Eskalation)
-                    \item $B$: Kunde ist PEP
+                    \item Training \textbf{ohne Labels}
+                    \item Ziel: Strukturen entdecken
+                    \item \textit{Bsp: Kundensegmentierung}
                 \end{itemize}
-                \vspace{0.1cm}
-                \textbf{Annahmen} (illustrativ):
-                \begin{itemize}
-                    \item $P(A)=0{,}2\%$ (Basisrate)
-                    \item $P(B|A)=5\%$
-                    \item $P(B|\neg A)=0{,}5\%$
-                \end{itemize}
-                \vspace{0.1cm}
-                \[
-                    P(A|B)\approx 2{,}0\%
-                \]
-                \vspace{-0.1cm}
-                \textit{PEP erhöht Risiko $\times$10, aber Großteil PEPs sind unverdächtig.}
-            \end{exampleblock}
+            \end{block}
         \end{column}
     \end{columns}
 \end{frame}
 
 \begin{frame}
-    \frametitle{Probabilistische Modelle: Naive Bayes}
-    \begin{itemize}
-        \item \textbf{Funktionsweise:} Berechnung von Wahrscheinlichkeiten basierend auf dem Satz von Bayes.
-        \item \textbf{Annahme:} "Naiv", da Unabhängigkeit zwischen den Merkmalen vorausgesetzt wird (in der Praxis oft verletzt, aber dennoch effektiv).
-    \end{itemize}
-    \vspace{0.3cm}
-    \begin{exampleblock}{Anwendung: AML-Klassifikation / Alert-Triage}
-        \begin{itemize}
-            \item \textbf{Use Case:} Einfache, robuste Einordnung von Alerts (z.B. "hohe" vs. "niedrige" Priorität) anhand von Transaktions- und Kundendaten.
-            \item \textbf{Mechanismus:} Kombination von Merkmalen wie Betrag, Frequenz, Länder-/Gegenparteirisiko, Kanal sowie ggf. Freitext-/Verwendungszweck-Token.
-        \end{itemize}
-    \end{exampleblock}
-\end{frame}
-
-\begin{frame}
-    \frametitle{Baumbasierte Verfahren: Decision Trees}
+    \frametitle{Taxonomie: Instanzbasiert vs. Modellbasiert}
+    \begin{center}
+        \includegraphics[width=0.85\linewidth]{plots/instance_vs_model.pdf}
+    \end{center}
     \begin{columns}
-        \begin{column}{0.6\textwidth}
-            \begin{itemize}
-                \item \textbf{Struktur:} Hierarchische Entscheidungsregeln, die den Datenraum rekursiv unterteilen.
-                \item \textbf{Kriterium:} Splits werden so gewählt, dass die "Reinheit" (Information Gain / Gini Impurity) der resultierenden Gruppen maximiert wird.
-                \item \textbf{Vorteil:} Hohe Interpretierbarkeit ("White Box").
-            \end{itemize}
-        \end{column}
-        \begin{column}{0.35\textwidth}
-            \begin{exampleblock}{Beispiel: AML-Risiko/Alert-Regeln}
+        \begin{column}{0.48\textwidth}
+            \begin{block}{Instanzbasiert}
                 \begin{itemize}
-                    \item Betrag $> X$?
-                    \item Hochrisiko-Land/Gegenpartei?
-                    \item Ungewöhnliche Frequenz/Pattern?
+                    \item Speichert alle Trainingsdaten
+                    \item Vergleicht neue Fälle mit Ähnlichen
+                    \item \textit{Bsp: k-Nearest Neighbors}
                 \end{itemize}
-                $\rightarrow$ Deterministischer Pfad zur Entscheidung.
-            \end{exampleblock}
+            \end{block}
+        \end{column}
+        \begin{column}{0.48\textwidth}
+            \begin{block}{Modellbasiert}
+                \begin{itemize}
+                    \item Lernt Parameter ($\theta$) aus Daten
+                    \item Kompaktes Modell, schnelle Vorhersage
+                    \item \textit{Bsp: Logistische Regression}
+                \end{itemize}
+            \end{block}
         \end{column}
     \end{columns}
 \end{frame}
 
 \begin{frame}
-    \frametitle{Ensemble Learning: Random Forests}
-    \begin{itemize}
-        \item \textbf{Konzept:} Aggregation mehrerer unkorrelierter Entscheidungsbäume ("Bagging").
-        \item \textbf{Mechanismus:} Jeder Baum trainiert auf einer zufälligen Teilmenge der Daten. Die finale Entscheidung erfolgt durch Mehrheitsvotum.
-        \item \textbf{Effekt:} Reduktion der Varianz und Erhöhung der Robustheit gegenüber Ausreißern.
-    \end{itemize}
-    \vspace{0.3cm}
-    \begin{block}{Analogie: Expertengremium}
-        Statt auf die Meinung eines einzelnen Experten (Decision Tree) zu vertrauen, wird der Konsens eines diversifizierten Gremiums (Random Forest) herangezogen.
-    \end{block}
-\end{frame}
-
-\begin{frame}
-    \frametitle{Geometrische Klassifikation: Support Vector Machines (SVM)}
-    \begin{itemize}
-        \item \textbf{Ziel:} Konstruktion einer optimalen Hyperebene zur Trennung von Klassen.
-        \item \textbf{Optimierung:} Maximierung des "Margin" (Sicherheitsabstand) zu den nächstgelegenen Datenpunkten (Support Vectors).
-        \item \textbf{Kernel-Trick:} Projektion linear nicht trennbarer Daten in höherdimensionale Räume, um Trennbarkeit zu ermöglichen.
-    \end{itemize}
-    \vspace{0.3cm}
-    \begin{alertblock}{Intuition}
-        Suche nach der breitestmöglichen Trennzone zwischen zwei Kategorien, um die Generalisierungsfähigkeit für neue Datenpunkte zu maximieren.
+    \frametitle{Das fundamentale Problem: Generalisierung}
+    \begin{center}
+        \includegraphics[width=0.95\linewidth]{plots/overfitting_visualization.pdf}
+    \end{center}
+    \vspace{-0.2cm}
+    \begin{alertblock}{Ziel des ML}
+        Das Modell soll auf \textbf{neuen, ungesehenen Daten} gut funktionieren -- nicht nur auf den Trainingsdaten!
     \end{alertblock}
 \end{frame}
 
-\section{Deep Learning}
+%===============================================================================
+\section{Wichtige Algorithmen}
+%===============================================================================
 
 \begin{frame}
-    \frametitle{Neuronale Netze \& Deep Learning}
-    \begin{itemize}
-        \item \textbf{Architektur:} Vernetzte Schichten künstlicher Neuronen (Input Layer, Hidden Layers, Output Layer).
-        \item \textbf{Lernprozess:} Anpassung der Gewichtungen zwischen Neuronen durch "Backpropagation" zur Minimierung des Fehlers.
-        \item \textbf{Stärke:} Modellierung hochkomplexer, nicht-linearer Zusammenhänge (Feature Extraction).
-    \end{itemize}
+    \frametitle{Übersicht: Wichtige ML-Algorithmen}
+    \begin{table}
+        \centering
+        \small
+        \begin{tabular}{@{}llll@{}}
+            \toprule
+            \textbf{Algorithmus} & \textbf{Typ} & \textbf{Stärke} & \textbf{AML-Anwendung} \\
+            \midrule
+            Log. Regression & Supervised & Interpretierbar & Risiko-Scores \\
+            Decision Tree & Supervised & Erklärbar & Regelableitung \\
+            Random Forest & Supervised & Robust & Alert-Klassifikation \\
+            Gradient Boosting & Supervised & Beste Accuracy & SAR-Priorisierung \\
+            k-Means & Unsupervised & Einfach & Segmentierung \\
+            Isolation Forest & Unsupervised & Anomalien & Outlier Detection \\
+            \bottomrule
+        \end{tabular}
+    \end{table}
     \vspace{0.3cm}
-    \begin{exampleblock}{Anwendungsfelder}
-        \begin{itemize}
-            \item Natural Language Processing (NLP) / Large Language Models.
-            \item Komplexe Mustererkennung in unstrukturierten Daten (Bilder, Audio).
-        \end{itemize}
-    \end{exampleblock}
-\end{frame}
-
-\section{Generative KI}
-
-\begin{frame}
-    \frametitle{Generative Künstliche Intelligenz}
-    \begin{itemize}
-        \item \textbf{Unterschied zu diskriminativer KI:}
-        \begin{itemize}
-            \item \textit{Diskriminativ:} Unterscheidet Klassen (Ist das Bild eine Katze oder ein Hund?)
-            \item \textit{Generativ:} Erzeugt neue Dateninstanzen (Erstelle ein Bild einer Katze).
-        \end{itemize}
-        \item \textbf{AML-relevante Anwendungen:}
-        \begin{itemize}
-            \item Fallzusammenfassungen: strukturierte Beschreibung auffälliger Transaktionsmuster.
-            \item Unterstützung bei Investigations: Entwürfe für Narrative/Begründungen (immer mit Human-in-the-loop).
-            \item Synthetische Daten (vorsichtig): Testdaten für Pipelines ohne echte Kundendaten.
-        \end{itemize}
-        \item \textbf{Technologien:}
-        \begin{itemize}
-            \item Large Language Models (Transformer \cite{vaswani2017attention})
-            \item Diffusion Models (Bildgenerierung)
-            \item GANs (Generative Adversarial Networks)
-        \end{itemize}
-    \end{itemize}
+    \begin{alertblock}{Praxis-Tipp}
+        Für \textbf{tabellarische Daten} (Transaktionen) ist Gradient Boosting (XGBoost, LightGBM) oft am besten. Für \textbf{Text/Bilder} Deep Learning.
+    \end{alertblock}
 \end{frame}
 
 \begin{frame}
-    \frametitle{Exkurs: Transformer \& Large Language Models}
+    \frametitle{k-Nearest Neighbors: Ähnlichkeitsbasierte Klassifikation}
     \begin{columns}
-        \begin{column}{0.58\textwidth}
+        \begin{column}{0.48\textwidth}
             \begin{itemize}
-                \item \textbf{Transformer-Architektur:} \cite{vaswani2017attention}
-                \begin{itemize}
-                    \item Self-Attention-Mechanismus: parallele Verarbeitung langer Sequenzen
-                    \item Encoder-Decoder-Struktur (oder nur Decoder bei GPT-Modellen)
-                \end{itemize}
-                \item \textbf{Pre-Training \& Fine-Tuning:}
-                \begin{itemize}
-                    \item Unsupervised Pre-Training auf großen Textkorpora
-                    \item Task-spezifisches Fine-Tuning (z.B. Named Entity Recognition für AML)
-                \end{itemize}
-                \item \textbf{Prompt Engineering:}
-                \begin{itemize}
-                    \item Zero-/Few-Shot Learning ohne explizites Training
-                    \item Chain-of-Thought für komplexe Reasoning-Aufgaben
-                \end{itemize}
+                \item \textbf{Idee:} Klassifiziere nach den $k$ ähnlichsten Fällen
+                \item \textbf{Distanz:} z.B. Euklidisch
+                \item \textbf{Vorteil:} Keine Annahmen über Daten
+                \item \textbf{Nachteil:} Langsam bei vielen Daten
             \end{itemize}
-        \end{column}
-        \begin{column}{0.38\textwidth}
-            \begin{exampleblock}{\small AML Use Cases}
-                \scriptsize
-                \begin{itemize}
-                    \item \textbf{Narrative Generation:} Automatische SAR-Entwürfe aus strukturierten Alert-Daten
-                    \item \textbf{Entity Extraction:} Namen, Adressen, Konten aus Freitextfeldern
-                    \item \textbf{Risk Scoring:} Textanalyse von Verwendungszweck/Beschreibung
-                    \item \textbf{Translation:} Fremdsprachige Dokumente für Investigations
-                \end{itemize}
-                \vspace{0.2cm}
-                \textit{Achtung:} Halluzination-Risiko, Bias, Datenschutz; Human-in-the-loop obligatorisch.
+            \vspace{0.3cm}
+            \begin{exampleblock}{AML}
+                Ist diese Transaktion ähnlich zu bekannten Betrugsfällen?
             \end{exampleblock}
         \end{column}
-    \end{columns}
-\end{frame}
-
-\section{Unüberwachtes Lernen}
-
-\begin{frame}
-    \frametitle{Kategorie 2: Unüberwachtes Lernen (Unsupervised Learning)}
-    \begin{itemize}
-        \item \textbf{Ausgangslage:} Unstrukturierte Daten ohne Labels oder Zielvariablen.
-        \item \textbf{Ziel:} Explorative Datenanalyse zur Identifikation latenter Strukturen, Cluster oder Anomalien.
-    \end{itemize}
-    \vspace{0.5cm}
-    \begin{block}{Methode: k-Means Clustering}
-        Partitionierung des Datensatzes in $k$ Cluster durch iterative Minimierung der Varianz innerhalb der Cluster (Abstand zu Zentroiden).
-    \end{block}
-    \vspace{0.2cm}
-    	extbf{Praxis (AML):} Kundensegmentierung nach Transaktionsverhalten, Erkennung ungewöhnlicher Muster (Outlier Detection) und Cluster-basierte Schwellenwerte pro Segment.
-\end{frame}
-
-\section{Validierung \& Herausforderungen}
-
-\begin{frame}
-    \frametitle{Herausforderung: Overfitting (Überanpassung)}
-    \begin{columns}
-        \begin{column}{0.6\textwidth}
-            \begin{itemize}
-                \item \textbf{Phänomen:} Das Modell passt sich zu stark an die Trainingsdaten (inkl. Rauschen) an und verliert die Fähigkeit zur Generalisierung.
-                \item \textbf{Symptom:} Hohe Performance im Training, schlechte Performance bei neuen Daten (Test Set).
-                \item \textbf{Gegenmaßnahmen:} Regularisierung, Cross-Validation, mehr Trainingsdaten.
-            \end{itemize}
-        \end{column}
-        \begin{column}{0.35\textwidth}
-            \begin{alertblock}{Konzeptuelles Problem}
-                "Auswendiglernen" statt "Verstehen". Das Modell lernt die spezifischen Eigenheiten des Datensatzes, nicht die zugrunde liegende Gesetzmäßigkeit.
-            \end{alertblock}
-        \end{column}
-    \end{columns}
-\end{frame}
-
-\begin{frame}
-    \frametitle{Evaluation: Metriken jenseits der Accuracy}
-    \begin{itemize}
-        \item In unausgewogenen Datensätzen (z.B. Betrugserkennung: 99,9\% legale Transaktionen) ist reine "Treffergenauigkeit" irreführend.
-    \end{itemize}
-    \vspace{0.3cm}
-    \begin{columns}
-        \begin{column}{0.48\textwidth}
-            \begin{block}{Precision (Präzision)}
-                Verhältnis der relevanten Treffer zu allen Treffern.
-                \textit{Wie viele der als Betrug markierten Fälle sind tatsächlich Betrug?}
-                $\rightarrow$ Minimierung False Positives.
-            \end{block}
-        \end{column}
-        \begin{column}{0.48\textwidth}
-            \begin{block}{Recall (Sensitivität)}
-                Verhältnis der gefundenen relevanten Treffer zu allen relevanten Fällen.
-                \textit{Wie viele der echten Betrugsfälle wurden gefunden?}
-                $\rightarrow$ Minimierung False Negatives.
-            \end{block}
-        \end{column}
-    \end{columns}
-\end{frame}
-
-\section{Praxisbeispiele}
-
-\begin{frame}
-    \frametitle{k-Nearest Neighbors (k-NN): Nachbarschaft \& (schematische) Decision Boundary}
-    \begin{columns}
-        \begin{column}{0.52\textwidth}
-            \begin{itemize}
-                \item \textbf{Features (Beispiel AML):} Betrag, Frequenz, Land, Kanal.
-                \item \textbf{Idee:} Neue Transaktion wird nach Ähnlichkeit zu historischen Fällen klassifiziert.
-                \item \textbf{Decision Boundary:} ergibt sich aus lokalen Mehrheiten (oft nicht-linear).
-            \end{itemize}
-        \end{column}
-        \begin{column}{0.46\textwidth}
+        \begin{column}{0.50\textwidth}
             \centering
             \includegraphics[width=\linewidth]{plots/knn_decision_boundary.pdf}
         \end{column}
@@ -331,41 +166,256 @@
 \end{frame}
 
 \begin{frame}
-    \frametitle{k-Means: Cluster \& Decision Boundary (Voronoi bei $k=2$)}
+    \frametitle{k-Means Clustering: Segmentierung ohne Labels}
     \begin{columns}
-        \begin{column}{0.52\textwidth}
+        \begin{column}{0.48\textwidth}
             \begin{itemize}
-                \item \textbf{Ziel:} Segmentierung von Kunden/Transaktionen ohne Labels.
-                \item \textbf{Nutzen (AML):} Schwellenwerte \& Erwartungen pro Segment ("normal" vs. "auffällig" je Cluster).
-                \item \textbf{Decision Boundary:} Punkte gehören zum nächstgelegenen Zentroid.
+                \item \textbf{Idee:} Teile Daten in $k$ Gruppen
+                \item \textbf{Algorithmus:} Iterative Zentroid-Anpassung
+                \item \textbf{Nutzen:} Entdecke natürliche Gruppen
             \end{itemize}
+            \vspace{0.3cm}
+            \begin{exampleblock}{AML-Nutzen}
+                \begin{itemize}
+                    \item Kundensegmentierung
+                    \item Peer-Group-Analyse
+                    \item Segment-spezifische Schwellenwerte
+                \end{itemize}
+            \end{exampleblock}
         \end{column}
-        \begin{column}{0.46\textwidth}
+        \begin{column}{0.50\textwidth}
             \centering
             \includegraphics[width=\linewidth]{plots/kmeans_voronoi.pdf}
         \end{column}
     \end{columns}
 \end{frame}
 
+%===============================================================================
+\section{Evaluation \& Metriken}
+%===============================================================================
+
 \begin{frame}
-    \frametitle{Zusammenfassung}
-    \begin{table}
-        \centering
-        \small
-        \begin{tabular}{@{}lll@{}}
-            \toprule
-            \textbf{Methode} & \textbf{Typ} & \textbf{AML-/Transaktionsbezug} \\
-            \midrule
-            k-NN & Supervised & Ähnlichkeit zu historischen Fällen / Alert-Triage \\
-            Naive Bayes & Supervised & Schnelle Klassifikation (z.B. Priorisierung) \\
-            Decision Trees & Supervised & Interpretierbare Regeln für Risiko-Features \\
-            Random Forest & Supervised & Robustere Klassifikation mit vielen Merkmalen \\
-            SVM & Supervised & Trennung von Klassen bei klaren Margins \\
-            Neural Networks & Supervised & Nichtlineare Muster (Sequenzen, Text, Graph) \\
-            k-Means & Unsupervised & Segmentierung von Kunden/Transaktionen, Baselines \\
-            \bottomrule
-        \end{tabular}
-    \end{table}
+    \frametitle{Warum Accuracy nicht ausreicht}
+    \begin{columns}
+        \begin{column}{0.55\textwidth}
+            \textbf{Problem: Unbalancierte Daten}
+            \begin{itemize}
+                \item AML: $<$1\% verdächtige Transaktionen
+                \item Ein Modell, das \textit{immer} „normal" sagt, hat 99\% Accuracy!
+            \end{itemize}
+            \vspace{0.3cm}
+            \textbf{Bessere Metriken:}
+            \begin{itemize}
+                \item \textbf{Precision:} Wie viele Alarme sind echt?
+                \item \textbf{Recall:} Wie viele Betrugsfälle gefunden?
+                \item \textbf{F1-Score:} Balance beider
+            \end{itemize}
+        \end{column}
+        \begin{column}{0.43\textwidth}
+            \begin{alertblock}{AML-Abwägung}
+                \textbf{Hoher Recall} = weniger übersehene Fälle\\
+                (regulatorisch wichtig!)
+                \vspace{0.2cm}
+                
+                \textbf{Hohe Precision} = weniger Fehlalarme\\
+                (Effizienz)
+                \vspace{0.2cm}
+                
+                $\rightarrow$ Schwellenwert je nach Risiko-Appetit wählen
+            \end{alertblock}
+        \end{column}
+    \end{columns}
+\end{frame}
+
+\begin{frame}
+    \frametitle{Konfusionsmatrix \& Precision-Recall}
+    \begin{center}
+        \includegraphics[width=0.9\linewidth]{plots/precision_recall.pdf}
+    \end{center}
+    \vspace{-0.2cm}
+    \[
+        \text{Precision} = \frac{TP}{TP + FP} \qquad
+        \text{Recall} = \frac{TP}{TP + FN} \qquad
+        F_1 = 2 \, \frac{P \, R}{P + R}
+    \]
+\end{frame}
+
+\begin{frame}
+    \frametitle{Train/Validation/Test: Das Daten-Dreieck}
+    \begin{columns}
+        \begin{column}{0.55\textwidth}
+            \begin{enumerate}
+                \item \textbf{Training Set (60-70\%)}\\
+                      Modell lernt daraus
+                \item \textbf{Validation Set (15-20\%)}\\
+                      Hyperparameter-Tuning
+                \item \textbf{Test Set (15-20\%)}\\
+                      Finale, unberührte Evaluation
+            \end{enumerate}
+            \vspace{0.3cm}
+            \begin{alertblock}{Goldene Regel}
+                Das Test Set darf \textbf{niemals} für Modellentscheidungen genutzt werden!
+            \end{alertblock}
+        \end{column}
+        \begin{column}{0.42\textwidth}
+            \begin{block}{Cross-Validation}
+                Bei wenig Daten: K-Fold CV
+                \begin{itemize}
+                    \item Teile in $k$ Teile
+                    \item Trainiere $k$ mal
+                    \item Mittle Ergebnisse
+                \end{itemize}
+                $\rightarrow$ Robustere Schätzung
+            \end{block}
+        \end{column}
+    \end{columns}
+\end{frame}
+
+%===============================================================================
+\section{ML für Banken \& Aufsicht}
+%===============================================================================
+
+\begin{frame}
+    \frametitle{Was könnten Banken implementieren?}
+    \begin{columns}
+        \begin{column}{0.48\textwidth}
+            \begin{block}{Transaction Monitoring}
+                \begin{itemize}
+                    \item ML-Scoring für Alerts
+                    \item Anomalieerkennung
+                    \item Peer-Group-Analyse
+                \end{itemize}
+            \end{block}
+            \vspace{0.2cm}
+            \begin{block}{Sanctions Screening}
+                \begin{itemize}
+                    \item NLP für Namensabgleich
+                    \item False-Positive-Reduktion
+                    \item Entity Resolution
+                \end{itemize}
+            \end{block}
+        \end{column}
+        \begin{column}{0.48\textwidth}
+            \begin{block}{Customer Risk Rating}
+                \begin{itemize}
+                    \item Automatisierte Risikobewertung
+                    \item Dynamische Anpassung
+                    \item Feature-basiertes Scoring
+                \end{itemize}
+            \end{block}
+            \vspace{0.2cm}
+            \begin{block}{Investigation Support}
+                \begin{itemize}
+                    \item LLM für SAR-Narrative
+                    \item Automatische Zusammenfassungen
+                    \item Dokumentenanalyse
+                \end{itemize}
+            \end{block}
+        \end{column}
+    \end{columns}
+\end{frame}
+
+\begin{frame}
+    \frametitle{Fragen für Vor-Ort-PrüferInnen}
+    \begin{columns}
+        \begin{column}{0.48\textwidth}
+            \begin{block}{Modellentwicklung}
+                \begin{itemize}
+                    \item Welche \textbf{Daten} wurden für das Training verwendet?
+                    \item Wie wurde \textbf{Overfitting} verhindert?
+                    \item Welche \textbf{Features} nutzt das Modell?
+                    \item Gibt es eine \textbf{Baseline} zum Vergleich?
+                \end{itemize}
+            \end{block}
+            \vspace{0.2cm}
+            \begin{block}{Validierung}
+                \begin{itemize}
+                    \item Welche \textbf{Metriken} werden verwendet?
+                    \item Wie oft wird das Modell \textbf{re-validiert}?
+                    \item Gibt es \textbf{Out-of-Time}-Tests?
+                \end{itemize}
+            \end{block}
+        \end{column}
+        \begin{column}{0.48\textwidth}
+            \begin{block}{Governance \& Erklärbarkeit}
+                \begin{itemize}
+                    \item Wer ist für das Modell \textbf{verantwortlich}?
+                    \item Ist das Modell \textbf{erklärbar}? (SHAP, Feature Importance)
+                    \item Wie werden \textbf{Änderungen} dokumentiert?
+                \end{itemize}
+            \end{block}
+            \vspace{0.2cm}
+            \begin{block}{Monitoring \& Drift}
+                \begin{itemize}
+                    \item Wird \textbf{Model Drift} überwacht?
+                    \item Was passiert bei \textbf{Performance-Einbruch}?
+                    \item Gibt es \textbf{Fallback}-Mechanismen?
+                \end{itemize}
+            \end{block}
+        \end{column}
+    \end{columns}
+\end{frame}
+
+\begin{frame}
+    \frametitle{Red Flags bei ML-Implementierungen}
+    \begin{columns}
+        \begin{column}{0.48\textwidth}
+            \begin{alertblock}{Warnsignale}
+                \begin{itemize}
+                    \item Keine klare \textbf{Dokumentation}
+                    \item Test Set wurde für Tuning genutzt
+                    \item Nur \textbf{Accuracy} als Metrik
+                    \item Kein \textbf{Monitoring} in Produktion
+                    \item „Black Box" ohne Erklärbarkeit
+                    \item Keine \textbf{Governance}-Struktur
+                    \item Modell seit Jahren nicht \textbf{re-trainiert}
+                \end{itemize}
+            \end{alertblock}
+        \end{column}
+        \begin{column}{0.48\textwidth}
+            \begin{block}{Best Practices}
+                \begin{itemize}
+                    \item Klare \textbf{Model Risk Management} Policy
+                    \item Regelmäßige \textbf{Validierung} (jährlich)
+                    \item \textbf{Challenger Models} zum Vergleich
+                    \item \textbf{Human-in-the-Loop} bei kritischen Entscheidungen
+                    \item Dokumentierte \textbf{Feature-Auswahl}
+                    \item \textbf{Audit Trail} aller Änderungen
+                \end{itemize}
+            \end{block}
+        \end{column}
+    \end{columns}
+\end{frame}
+
+%===============================================================================
+\section{Zusammenfassung}
+%===============================================================================
+
+\begin{frame}
+    \frametitle{Key Takeaways}
+    \begin{enumerate}
+        \item \textbf{ML lernt Regeln aus Daten} -- keine explizite Programmierung
+        \vspace{0.2cm}
+        \item \textbf{Überwacht vs. Unüberwacht:} Mit oder ohne Labels
+        \vspace{0.2cm}
+        \item \textbf{Generalisierung ist das Ziel} -- Overfitting vermeiden!
+        \vspace{0.2cm}
+        \item \textbf{Accuracy reicht nicht} -- Precision, Recall, F1 betrachten
+        \vspace{0.2cm}
+        \item \textbf{Gradient Boosting} ist oft State-of-the-Art für Tabellendaten
+        \vspace{0.2cm}
+        \item \textbf{Erklärbarkeit \& Governance} sind essenziell für regulierte Bereiche
+    \end{enumerate}
+    \vspace{0.3cm}
+    \begin{block}{Literaturempfehlung}
+        Géron, A. (2022). \textit{Hands-On Machine Learning with Scikit-Learn, Keras, and TensorFlow}. O'Reilly. \cite{geron2022hands}
+    \end{block}
+\end{frame}
+
+\begin{frame}[allowframebreaks]
+    \frametitle{Literatur}
+    \bibliographystyle{plain}
+    \bibliography{literature}
 \end{frame}
 
 \end{document}

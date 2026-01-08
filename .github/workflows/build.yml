@@ -1,0 +1,65 @@
+name: Build LaTeX Slides
+
+on:
+  push:
+    branches: [main, master, update/slides]
+  pull_request:
+    branches: [main, master]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        
+      - name: Setup Python for plots
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          
+      - name: Install Python dependencies
+        run: |
+          pip install matplotlib numpy scikit-learn
+          
+      - name: Generate plots
+        run: |
+          cd plots
+          python knn_decision_boundary.py
+          python kmeans_voronoi.py
+          python overfitting_visualization.py
+          python supervised_vs_unsupervised.py
+          python instance_vs_model.py
+          python precision_recall.py
+          
+      - name: Compile LaTeX document
+        uses: xu-cheng/latex-action@v3
+        with:
+          root_file: machine_learning.tex
+          latexmk_use_xelatex: true
+          latexmk_shell_escape: true
+          extra_system_packages: |
+            biber
+            
+      - name: Upload PDF artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: machine-learning-slides
+          path: machine_learning.pdf
+          retention-days: 30
+          
+      - name: Create Release
+        if: github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master' || github.ref == 'refs/heads/update/slides')
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: v${{ github.run_number }}
+          name: Slides Release ${{ github.run_number }}
+          files: machine_learning.pdf
+          generate_release_notes: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
