@@ -1,0 +1,206 @@
+\documentclass[11pt, aspectratio=169]{beamer}
+\usetheme{Modern}
+\usepackage{pgfplots}
+\usepackage{amssymb}
+\usepackage{booktabs}
+\usepackage{tikz}
+\usetikzlibrary{trees,shapes,arrows,positioning,decorations.pathreplacing}
+\usepackage[backend=biber,style=numeric,sorting=none]{biblatex}
+\addbibresource{literature.bib}
+\pgfplotsset{compat=1.18}
+
+\title{Maschinelles Lernen}
+\subtitle{Eine kurze Einführung für JuristInnen}
+\author{Julian Streitberger (FMA -- Abteilung IV/4)}
+\date{\today}
+
+\begin{document}
+
+\maketitle
+
+%===============================================================================
+% FOLIE 1: Was ist ML?
+%===============================================================================
+
+\begin{frame}
+    \frametitle{Was ist Maschinelles Lernen?}
+    \begin{columns}
+        \begin{column}{0.55\textwidth}
+            \begin{block}{Kernidee}
+                Statt Regeln manuell zu programmieren, lernt der Computer die Regeln \textbf{aus Daten}.
+            \end{block}
+            \vspace{0.4cm}
+            \textbf{Traditionelle Programmierung:}\\
+            Mensch schreibt Regeln $\rightarrow$ Computer führt aus
+            \vspace{0.3cm}
+            
+            \textbf{Maschinelles Lernen:}\\
+            Daten + Beispiele $\rightarrow$ Computer lernt Regeln
+        \end{column}
+        \begin{column}{0.42\textwidth}
+            \begin{exampleblock}{Beispiel: Geldwäsche}
+                \textbf{Regelbasiert:}\\
+                „Melde alle TX $>$ \texteuro 10.000"
+                \vspace{0.2cm}
+                
+                \textbf{ML-basiert:}\\
+                System erkennt verdächtige Muster aus historischen Fällen -- auch \textit{unbekannte}.
+            \end{exampleblock}
+        \end{column}
+    \end{columns}
+\end{frame}
+
+%===============================================================================
+% FOLIE 2: Zwei Lernarten
+%===============================================================================
+
+\begin{frame}
+    \frametitle{Zwei Lernarten: Überwacht vs. Unüberwacht}
+    \begin{columns}
+        \begin{column}{0.48\textwidth}
+            \begin{block}{Überwachtes Lernen (Supervised)}
+                \begin{itemize}
+                    \item Computer lernt aus \textbf{Beispielen mit Lösung}
+                    \item Wie ein Student mit Musterlösungen
+                    \item \textit{Bsp: „Diese 1000 Fälle waren Betrug, diese 9000 nicht"}
+                \end{itemize}
+                \vspace{0.2cm}
+                \textbf{Anwendung:} Alert-Klassifikation, Risiko-Scoring
+            \end{block}
+        \end{column}
+        \begin{column}{0.48\textwidth}
+            \begin{block}{Unüberwachtes Lernen (Unsupervised)}
+                \begin{itemize}
+                    \item Computer findet \textbf{selbst Muster}
+                    \item Wie ein Detektiv ohne Hinweise
+                    \item \textit{Bsp: „Gruppiere ähnliche Kunden"}
+                \end{itemize}
+                \vspace{0.2cm}
+                \textbf{Anwendung:} Kundensegmentierung, Anomalieerkennung
+            \end{block}
+        \end{column}
+    \end{columns}
+\end{frame}
+
+%===============================================================================
+% FOLIE 3: Das Problem Overfitting
+%===============================================================================
+
+\begin{frame}
+    \frametitle{Das zentrale Problem: Overfitting}
+    \begin{center}
+        \includegraphics[width=0.85\linewidth]{plots/overfitting_visualization.pdf}
+    \end{center}
+    \begin{alertblock}{Juristische Analogie}
+        \textbf{Overfitting} = Das Modell „lernt den Fall auswendig" statt das Prinzip zu verstehen.\\
+        Wie ein Jurist, der nur die Urteile kennt, aber nicht die dahinterliegenden Rechtsgrundsätze.
+    \end{alertblock}
+\end{frame}
+
+%===============================================================================
+% FOLIE 4: Metriken
+%===============================================================================
+
+\begin{frame}
+    \frametitle{Wie gut ist ein Modell? -- Precision \& Recall}
+    \begin{columns}
+        \begin{column}{0.55\textwidth}
+            \textbf{Das Dilemma bei seltenen Ereignissen:}
+            \begin{itemize}
+                \item Geldwäsche: $<$1\% aller Transaktionen
+                \item Ein Modell, das \textit{immer} „unbedenklich" sagt, hat 99\% Trefferquote!
+            \end{itemize}
+            \vspace{0.3cm}
+            \textbf{Bessere Maßstäbe:}
+            \begin{itemize}
+                \item \textbf{Precision:} Wie viele Alarme sind echte Treffer?
+                \item \textbf{Recall:} Wie viele echte Fälle wurden gefunden?
+            \end{itemize}
+        \end{column}
+        \begin{column}{0.42\textwidth}
+            \begin{alertblock}{Abwägung}
+                \textbf{Hoher Recall:}\\
+                Weniger übersehene Fälle\\
+                {\small (regulatorisch wichtig!)}
+                \vspace{0.2cm}
+                
+                \textbf{Hohe Precision:}\\
+                Weniger Fehlalarme\\
+                {\small (Effizienz)}
+            \end{alertblock}
+        \end{column}
+    \end{columns}
+\end{frame}
+
+%===============================================================================
+% FOLIE 5: Fragen für Prüfer
+%===============================================================================
+
+\begin{frame}
+    \frametitle{Fragen für Vor-Ort-PrüferInnen}
+    \begin{columns}
+        \begin{column}{0.48\textwidth}
+            \begin{block}{Zur Modellentwicklung}
+                \begin{itemize}
+                    \item Mit welchen \textbf{Daten} wurde trainiert?
+                    \item Wurde auf \textbf{Overfitting} getestet?
+                    \item Welche \textbf{Faktoren} fließen ein?
+                \end{itemize}
+            \end{block}
+            \vspace{0.2cm}
+            \begin{block}{Zur Validierung}
+                \begin{itemize}
+                    \item Welche \textbf{Metriken} werden gemessen?
+                    \item Wie oft wird \textbf{überprüft}?
+                \end{itemize}
+            \end{block}
+        \end{column}
+        \begin{column}{0.48\textwidth}
+            \begin{block}{Zur Governance}
+                \begin{itemize}
+                    \item Wer ist \textbf{verantwortlich}?
+                    \item Ist das Modell \textbf{erklärbar}?
+                    \item Wie werden \textbf{Änderungen} dokumentiert?
+                \end{itemize}
+            \end{block}
+            \vspace{0.2cm}
+            \begin{alertblock}{Red Flags}
+                \begin{itemize}
+                    \item Keine Dokumentation
+                    \item Nur „Accuracy" als Metrik
+                    \item Kein regelmäßiges Re-Training
+                \end{itemize}
+            \end{alertblock}
+        \end{column}
+    \end{columns}
+\end{frame}
+
+%===============================================================================
+% FOLIE 6: Key Takeaways
+%===============================================================================
+
+\begin{frame}
+    \frametitle{Zusammenfassung}
+    \begin{enumerate}
+        \item \textbf{ML lernt aus Daten} -- keine explizite Programmierung nötig
+        \vspace{0.3cm}
+        \item \textbf{Überwacht vs. Unüberwacht:} Mit oder ohne Beispiellösungen
+        \vspace{0.3cm}
+        \item \textbf{Overfitting vermeiden:} Das Modell soll generalisieren können
+        \vspace{0.3cm}
+        \item \textbf{Precision \& Recall:} Wichtiger als reine Trefferquote
+        \vspace{0.3cm}
+        \item \textbf{Governance \& Erklärbarkeit:} Essenziell für regulierte Bereiche
+    \end{enumerate}
+    \vspace{0.4cm}
+    \begin{block}{Literaturempfehlung}
+        Géron, A. (2022). \textit{Hands-On Machine Learning}. O'Reilly. \cite{geron2022hands}
+    \end{block}
+\end{frame}
+
+\begin{frame}[allowframebreaks]
+    \frametitle{Literatur}
+    \printbibliography[heading=none]
+\end{frame}
+
+\end{document}

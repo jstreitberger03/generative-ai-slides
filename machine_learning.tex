@@ -3,9 +3,14 @@
 \usepackage{pgfplots}
 \usepackage{amssymb}
 \usepackage{booktabs}
+\usepackage{tikz}
+\usetikzlibrary{trees,shapes,arrows,positioning,decorations.pathreplacing}
+\usepackage[backend=biber,style=numeric,sorting=none]{biblatex}
+\addbibresource{literature.bib}
+\pgfplotsset{compat=1.18}
 
 \title{Maschinelles Lernen}
-\subtitle{Eine kurze Einführung für JuristInnen}
+\subtitle{Eine Einführung für JuristInnen}
 \author{Julian Streitberger (FMA -- Abteilung IV/4)}
 \date{\today}
 
@@ -13,8 +18,13 @@
 
 \maketitle
 
+\begin{frame}
+    \frametitle{Agenda}
+    \tableofcontents
+\end{frame}
+
 %===============================================================================
-% FOLIE 1: Was ist ML?
+\section{Grundkonzepte}
 %===============================================================================
 
 \begin{frame}
@@ -45,47 +55,92 @@
     \end{columns}
 \end{frame}
 
-%===============================================================================
-% FOLIE 2: Zwei Lernarten
-%===============================================================================
-
 \begin{frame}
-    \frametitle{Zwei Lernarten: Überwacht vs. Unüberwacht}
+    \frametitle{Warum ML? -- Grenzen regelbasierter Systeme}
     \begin{columns}
         \begin{column}{0.48\textwidth}
-            \begin{block}{Überwachtes Lernen (Supervised)}
+            \begin{alertblock}{Probleme mit Regeln}
                 \begin{itemize}
-                    \item Computer lernt aus \textbf{Beispielen mit Lösung}
-                    \item Wie ein Student mit Musterlösungen
-                    \item \textit{Bsp: „Diese 1000 Fälle waren Betrug, diese 9000 nicht"}
+                    \item \textbf{Starre Schwellenwerte:} \texteuro 9.999 vs. \texteuro 10.001
+                    \item \textbf{Bekannte Muster:} Nur was programmiert wurde
+                    \item \textbf{Kombinatorische Explosion:} Tausende Wenn-Dann-Regeln
+                    \item \textbf{Wartungsaufwand:} Manuelle Anpassung an neue Typologien
                 \end{itemize}
-                \vspace{0.2cm}
-                \textbf{Anwendung:} Alert-Klassifikation, Risiko-Scoring
-            \end{block}
+            \end{alertblock}
         \end{column}
         \begin{column}{0.48\textwidth}
-            \begin{block}{Unüberwachtes Lernen (Unsupervised)}
+            \begin{block}{Vorteile von ML}
                 \begin{itemize}
-                    \item Computer findet \textbf{selbst Muster}
-                    \item Wie ein Detektiv ohne Hinweise
-                    \item \textit{Bsp: „Gruppiere ähnliche Kunden"}
+                    \item \textbf{Weiche Grenzen:} Wahrscheinlichkeiten statt Ja/Nein
+                    \item \textbf{Mustererkennung:} Auch unbekannte Muster
+                    \item \textbf{Skalierbarkeit:} Tausende Features gleichzeitig
+                    \item \textbf{Adaptivität:} Lernt aus neuen Daten
                 \end{itemize}
-                \vspace{0.2cm}
-                \textbf{Anwendung:} Kundensegmentierung, Anomalieerkennung
             \end{block}
         \end{column}
     \end{columns}
 \end{frame}
 
-%===============================================================================
-% FOLIE 3: Das Problem Overfitting
-%===============================================================================
+\begin{frame}
+    \frametitle{Taxonomie: Überwacht vs. Unüberwacht}
+    \begin{center}
+        \includegraphics[width=0.85\linewidth]{plots/supervised_vs_unsupervised.pdf}
+    \end{center}
+    \begin{columns}
+        \begin{column}{0.48\textwidth}
+            \begin{block}{Überwacht (Supervised)}
+                \begin{itemize}
+                    \item Training mit \textbf{gelabelten} Daten
+                    \item Ziel: Vorhersage für neue Fälle
+                    \item \textit{Bsp: Alert-Klassifikation}
+                \end{itemize}
+            \end{block}
+        \end{column}
+        \begin{column}{0.48\textwidth}
+            \begin{block}{Unüberwacht (Unsupervised)}
+                \begin{itemize}
+                    \item Training \textbf{ohne Labels}
+                    \item Ziel: Strukturen entdecken
+                    \item \textit{Bsp: Kundensegmentierung}
+                \end{itemize}
+            \end{block}
+        \end{column}
+    \end{columns}
+\end{frame}
 
 \begin{frame}
-    \frametitle{Das zentrale Problem: Overfitting}
+    \frametitle{Taxonomie: Instanzbasiert vs. Modellbasiert}
     \begin{center}
-        \includegraphics[width=0.85\linewidth]{plots/overfitting_visualization.pdf}
+        \includegraphics[width=0.85\linewidth]{plots/instance_vs_model.pdf}
     \end{center}
+    \begin{columns}
+        \begin{column}{0.48\textwidth}
+            \begin{block}{Instanzbasiert}
+                \begin{itemize}
+                    \item Speichert alle Trainingsdaten
+                    \item Vergleicht neue Fälle mit Ähnlichen
+                    \item \textit{Bsp: k-Nearest Neighbors}
+                \end{itemize}
+            \end{block}
+        \end{column}
+        \begin{column}{0.48\textwidth}
+            \begin{block}{Modellbasiert}
+                \begin{itemize}
+                    \item Lernt Parameter aus Daten
+                    \item Kompaktes Modell, schnelle Vorhersage
+                    \item \textit{Bsp: Logistische Regression}
+                \end{itemize}
+            \end{block}
+        \end{column}
+    \end{columns}
+\end{frame}
+
+\begin{frame}
+    \frametitle{Das fundamentale Problem: Generalisierung}
+    \begin{center}
+        \includegraphics[width=0.95\linewidth]{plots/overfitting_visualization.pdf}
+    \end{center}
+    \vspace{-0.2cm}
     \begin{alertblock}{Juristische Analogie}
         \textbf{Overfitting} = Das Modell „lernt den Fall auswendig" statt das Prinzip zu verstehen.\\
         Wie ein Jurist, der nur die Urteile kennt, aber nicht die dahinterliegenden Rechtsgrundsätze.
@@ -93,11 +148,225 @@
 \end{frame}
 
 %===============================================================================
-% FOLIE 4: Metriken
+\section{Wichtige Algorithmen}
 %===============================================================================
 
 \begin{frame}
-    \frametitle{Wie gut ist ein Modell? -- Precision \& Recall}
+    \frametitle{Übersicht: Wichtige ML-Algorithmen}
+    \begin{table}
+        \centering
+        \small
+        \begin{tabular}{@{}llll@{}}
+            \toprule
+            \textbf{Algorithmus} & \textbf{Typ} & \textbf{Stärke} & \textbf{AML-Anwendung} \\
+            \midrule
+            Log. Regression & Supervised & Interpretierbar & Risiko-Scores \\
+            Decision Tree & Supervised & Erklärbar & Regelableitung \\
+            Random Forest & Supervised & Robust & Alert-Klassifikation \\
+            Gradient Boosting & Supervised & Beste Accuracy & SAR-Priorisierung \\
+            k-Means & Unsupervised & Einfach & Segmentierung \\
+            Isolation Forest & Unsupervised & Anomalien & Outlier Detection \\
+            \bottomrule
+        \end{tabular}
+    \end{table}
+    \vspace{0.3cm}
+    \begin{alertblock}{Praxis-Tipp}
+        Für \textbf{tabellarische Daten} (Transaktionen) ist Gradient Boosting (XGBoost, LightGBM) oft am besten. Für \textbf{Text/Bilder} Deep Learning.
+    \end{alertblock}
+\end{frame}
+
+\begin{frame}
+    \frametitle{Decision Trees: Der intuitivste Algorithmus}
+    \begin{columns}
+        \begin{column}{0.55\textwidth}
+            \begin{center}
+            \resizebox{0.95\textwidth}{!}{%
+            \begin{tikzpicture}[
+                level 1/.style={sibling distance=4.5cm, level distance=1.4cm},
+                level 2/.style={sibling distance=2.2cm, level distance=1.4cm},
+                decision/.style={diamond, draw, fill=blue!20, text width=2cm, align=center, inner sep=1pt, font=\scriptsize},
+                leaf/.style={rectangle, rounded corners, draw, fill=green!20, text width=1.4cm, align=center, font=\scriptsize},
+                leafred/.style={rectangle, rounded corners, draw, fill=red!20, text width=1.4cm, align=center, font=\scriptsize},
+                leaforange/.style={rectangle, rounded corners, draw, fill=orange!20, text width=1.4cm, align=center, font=\scriptsize},
+                edge from parent/.style={draw, -latex, thick},
+                every node/.style={font=\small}
+            ]
+            \node [decision] {Betrag $>$\texteuro15k?}
+                child { node [decision] {Hochrisiko-Land?}
+                    child { node [leaf] {Niedrig} edge from parent node[left, font=\tiny] {Nein} }
+                    child { node [leaforange] {Mittel} edge from parent node[right, font=\tiny] {Ja} }
+                    edge from parent node[left, font=\tiny] {Nein}
+                }
+                child { node [decision] {PEP?}
+                    child { node [leaforange] {Mittel} edge from parent node[left, font=\tiny] {Nein} }
+                    child { node [leafred] {Hoch} edge from parent node[right, font=\tiny] {Ja} }
+                    edge from parent node[right, font=\tiny] {Ja}
+                };
+            \end{tikzpicture}
+            }%
+            \end{center}
+            \vspace{0.1cm}
+            \begin{itemize}
+                \item \textbf{Prinzip:} Hierarchische Ja/Nein-Fragen
+                \item \textbf{Vorteil:} Sehr gut erklärbar
+                \item \textbf{Nachteil:} Neigt zu Overfitting
+            \end{itemize}
+        \end{column}
+        \begin{column}{0.42\textwidth}
+            \begin{block}{Juristische Parallele}
+                Decision Trees funktionieren wie ein \textbf{Prüfschema}:
+                \begin{itemize}
+                    \item Tatbestandsmerkmale prüfen
+                    \item Sequentielle Entscheidung
+                    \item Klare Begründung möglich
+                \end{itemize}
+            \end{block}
+        \end{column}
+    \end{columns}
+\end{frame}
+
+\begin{frame}
+    \frametitle{Ensemble Learning: Die Weisheit der Vielen}
+    \begin{columns}
+        \begin{column}{0.48\textwidth}
+            \begin{block}{Random Forest}
+                \begin{itemize}
+                    \item Viele Decision Trees
+                    \item Jeder sieht andere Daten
+                    \item \textbf{Mehrheitsentscheidung}
+                \end{itemize}
+                \vspace{0.2cm}
+                \textit{Wie ein Richtersenat: Mehrere unabhängige Meinungen führen zu robusterem Urteil.}
+            \end{block}
+        \end{column}
+        \begin{column}{0.48\textwidth}
+            \begin{block}{Gradient Boosting}
+                \begin{itemize}
+                    \item Bäume lernen \textbf{sequentiell}
+                    \item Jeder korrigiert Fehler des Vorgängers
+                    \item State-of-the-Art für Tabellen
+                \end{itemize}
+                \vspace{0.2cm}
+                \textit{Wie iterative Rechtsprechung: Jedes Urteil verfeinert die Auslegung.}
+            \end{block}
+        \end{column}
+    \end{columns}
+    \vspace{0.3cm}
+    \begin{alertblock}{Praxis}
+        XGBoost/LightGBM sind der \textbf{De-facto-Standard} für AML-Anwendungen mit strukturierten Daten.
+    \end{alertblock}
+\end{frame}
+
+\begin{frame}
+    \frametitle{Gradient Boosting: Schritt für Schritt erklärt}
+    \begin{columns}
+        \begin{column}{0.55\textwidth}
+            \begin{center}
+            \resizebox{0.95\textwidth}{!}{%
+            \begin{tikzpicture}[
+                tree/.style={draw, rounded corners, fill=blue!15, minimum width=1.2cm, minimum height=0.8cm, font=\scriptsize},
+                arrow/.style={->, thick, >=latex},
+                label/.style={font=\tiny, text width=2cm, align=center}
+            ]
+            % Tree 1
+            \node[tree] (t1) at (0,0) {Baum 1};
+            \node[below=0.1cm of t1, font=\tiny] {Erste Schätzung};
+            
+            % Arrow and error
+            \draw[arrow] (1.2,0) -- (2.3,0) node[midway, above, font=\tiny] {Fehler};
+            
+            % Tree 2
+            \node[tree] (t2) at (3.5,0) {Baum 2};
+            \node[below=0.1cm of t2, font=\tiny] {Korrigiert Fehler};
+            
+            % Arrow and error
+            \draw[arrow] (4.7,0) -- (5.8,0) node[midway, above, font=\tiny] {Restfehler};
+            
+            % Tree 3
+            \node[tree] (t3) at (7,0) {Baum 3};
+            \node[below=0.1cm of t3, font=\tiny] {Feintuning};
+            
+            % Dots
+            \node at (8.5,0) {\dots};
+            
+            % Final
+            \node[draw, rounded corners, fill=green!20, minimum width=1.5cm, minimum height=0.8cm, font=\scriptsize] (final) at (10,0) {Ergebnis};
+            
+            % Sum bracket
+            \draw[decorate, decoration={brace, amplitude=5pt, raise=5pt, mirror}] (0,-0.8) -- (7,-0.8) node[midway, below=10pt, font=\tiny] {Summe aller Bäume = Finale Vorhersage};
+            \end{tikzpicture}
+            }%
+            \end{center}
+            \vspace{0.3cm}
+            \textbf{Analogie: Korrektorat eines Textes}
+            \begin{enumerate}
+                \item \textbf{1. Lektor:} Findet grobe Fehler
+                \item \textbf{2. Lektor:} Korrigiert was der 1. übersah
+                \item \textbf{3. Lektor:} Feinschliff der Details
+            \end{enumerate}
+        \end{column}
+        \begin{column}{0.42\textwidth}
+            \begin{block}{Warum so erfolgreich?}
+                \begin{itemize}
+                    \item Jeder Baum ist \textbf{einfach}
+                    \item Zusammen = \textbf{präzise}
+                    \item \textbf{Automatisch} lernt er, worauf es ankommt
+                \end{itemize}
+            \end{block}
+            \vspace{0.2cm}
+            \begin{exampleblock}{Im AML-Kontext}
+                \begin{itemize}
+                    \item Baum 1: „Hohe Beträge sind verdächtig"
+                    \item Baum 2: „...aber nicht bei bekannten Händlern"
+                    \item Baum 3: „...außer bei neuen Kunden"
+                \end{itemize}
+            \end{exampleblock}
+        \end{column}
+    \end{columns}
+\end{frame}
+
+\begin{frame}
+    \frametitle{Neuronale Netze \& Deep Learning}
+    \begin{columns}
+        \begin{column}{0.55\textwidth}
+            \begin{itemize}
+                \item \textbf{Aufbau:} Schichten von „Neuronen"
+                \item \textbf{Lernen:} Gewichte werden angepasst
+                \item \textbf{Stärke:} Komplexe Muster in unstrukturierten Daten
+            \end{itemize}
+            \vspace{0.3cm}
+            \textbf{Wann nutzen?}
+            \begin{itemize}
+                \item Textanalyse (NLP)
+                \item Bildverarbeitung
+                \item Große Datenmengen
+            \end{itemize}
+        \end{column}
+        \begin{column}{0.42\textwidth}
+            \begin{alertblock}{Vorsicht}
+                \begin{itemize}
+                    \item Oft „Black Box"
+                    \item Braucht viele Daten
+                    \item Bei Tabellendaten meist nicht besser als Gradient Boosting
+                \end{itemize}
+            \end{alertblock}
+            \vspace{0.2cm}
+            \begin{block}{AML-Anwendung}
+                \begin{itemize}
+                    \item LLMs für SAR-Narrative
+                    \item NER für Entitätserkennung
+                \end{itemize}
+            \end{block}
+        \end{column}
+    \end{columns}
+\end{frame}
+
+%===============================================================================
+\section{Evaluation \& Metriken}
+%===============================================================================
+
+\begin{frame}
+    \frametitle{Warum Accuracy nicht ausreicht}
     \begin{columns}
         \begin{column}{0.55\textwidth}
             \textbf{Das Dilemma bei seltenen Ereignissen:}
@@ -110,6 +379,7 @@
             \begin{itemize}
                 \item \textbf{Precision:} Wie viele Alarme sind echte Treffer?
                 \item \textbf{Recall:} Wie viele echte Fälle wurden gefunden?
+                \item \textbf{F1-Score:} Harmonisches Mittel beider
             \end{itemize}
         \end{column}
         \begin{column}{0.42\textwidth}
@@ -127,9 +397,167 @@
     \end{columns}
 \end{frame}
 
+\begin{frame}
+    \frametitle{Konfusionsmatrix \& Precision-Recall}
+    \begin{center}
+        \includegraphics[width=0.9\linewidth]{plots/precision_recall.pdf}
+    \end{center}
+    \vspace{-0.2cm}
+    \[
+        \text{Precision} = \frac{TP}{TP + FP} \qquad
+        \text{Recall} = \frac{TP}{TP + FN} \qquad
+        F_1 = 2 \, \frac{P \, R}{P + R}
+    \]
+\end{frame}
+
+\begin{frame}
+    \frametitle{Train/Validation/Test: Das Daten-Dreieck}
+    \begin{columns}
+        \begin{column}{0.55\textwidth}
+            \begin{enumerate}
+                \item \textbf{Training Set (60-70\%)}\\
+                      Modell lernt daraus
+                \item \textbf{Validation Set (15-20\%)}\\
+                      Hyperparameter-Tuning
+                \item \textbf{Test Set (15-20\%)}\\
+                      Finale, unberührte Evaluation
+            \end{enumerate}
+            \vspace{0.3cm}
+            \begin{alertblock}{Goldene Regel}
+                Das Test Set darf \textbf{niemals} für Modellentscheidungen genutzt werden!
+            \end{alertblock}
+        \end{column}
+        \begin{column}{0.42\textwidth}
+            \begin{block}{Juristische Analogie}
+                Wie bei einer \textbf{Prüfung}:
+                \begin{itemize}
+                    \item Training = Lernen mit Übungsaufgaben
+                    \item Validation = Probeklausur
+                    \item Test = Echte Prüfung
+                \end{itemize}
+                \vspace{0.2cm}
+                Wer die Prüfungsfragen vorher kennt, besteht -- aber kann er auch wirklich etwas?
+            \end{block}
+        \end{column}
+    \end{columns}
+\end{frame}
+
+\begin{frame}
+    \frametitle{Cross-Validation: Robuste Schätzung}
+    \begin{columns}
+        \begin{column}{0.55\textwidth}
+            \textbf{K-Fold Cross-Validation:}
+            \begin{enumerate}
+                \item Teile Daten in $k$ gleiche Teile
+                \item Trainiere $k$ mal, jedes Mal mit anderem Test-Teil
+                \item Mittle die Ergebnisse
+            \end{enumerate}
+            \vspace{0.3cm}
+            \textbf{Vorteile:}
+            \begin{itemize}
+                \item Nutzt alle Daten für Training UND Test
+                \item Robustere Leistungsschätzung
+                \item Erkennt Überanpassung besser
+            \end{itemize}
+        \end{column}
+        \begin{column}{0.42\textwidth}
+            \begin{block}{Out-of-Time Validation}
+                Für Zeitreihendaten (wie Transaktionen):
+                \begin{itemize}
+                    \item Training auf alten Daten
+                    \item Test auf neuen Daten
+                    \item Simuliert Praxis-Einsatz
+                \end{itemize}
+                \vspace{0.2cm}
+                \textit{Besonders wichtig bei AML wegen sich ändernder Typologien!}
+            \end{block}
+        \end{column}
+    \end{columns}
+\end{frame}
+
 %===============================================================================
-% FOLIE 5: Fragen für Prüfer
+\section{ML für Banken \& Aufsicht}
 %===============================================================================
+
+\begin{frame}
+    \frametitle{ML-Anwendungen im Finanzsektor}
+    \begin{columns}
+        \begin{column}{0.48\textwidth}
+            \begin{block}{Transaction Monitoring}
+                \begin{itemize}
+                    \item ML-Scoring für Alerts
+                    \item Anomalieerkennung
+                    \item Peer-Group-Analyse
+                    \item Verhaltensbasierte Erkennung
+                \end{itemize}
+            \end{block}
+            \vspace{0.2cm}
+            \begin{block}{Sanctions Screening}
+                \begin{itemize}
+                    \item NLP für Namensabgleich
+                    \item False-Positive-Reduktion
+                    \item Entity Resolution
+                    \item Fuzzy Matching
+                \end{itemize}
+            \end{block}
+        \end{column}
+        \begin{column}{0.48\textwidth}
+            \begin{block}{Customer Risk Rating}
+                \begin{itemize}
+                    \item Automatisierte Risikobewertung
+                    \item Dynamische Anpassung
+                    \item Feature-basiertes Scoring
+                    \item Segmentierung
+                \end{itemize}
+            \end{block}
+            \vspace{0.2cm}
+            \begin{block}{Investigation Support}
+                \begin{itemize}
+                    \item LLM für SAR-Narrative
+                    \item Automatische Zusammenfassungen
+                    \item Dokumentenanalyse
+                    \item Alert Triage
+                \end{itemize}
+            \end{block}
+        \end{column}
+    \end{columns}
+\end{frame}
+
+\begin{frame}
+    \frametitle{Erklärbarkeit: Warum hat das Modell so entschieden?}
+    \begin{columns}
+        \begin{column}{0.48\textwidth}
+            \begin{block}{Feature Importance}
+                Welche Eingabevariablen haben den größten Einfluss?
+                \begin{itemize}
+                    \item Bei Gradient Boosting: eingebaut
+                    \item Globale Sicht auf Modell
+                \end{itemize}
+            \end{block}
+            \vspace{0.2cm}
+            \begin{block}{SHAP Values}
+                Erklärt \textbf{einzelne Vorhersagen}:
+                \begin{itemize}
+                    \item Warum dieser Score für diesen Kunden?
+                    \item Welche Faktoren erhöhen/senken Risiko?
+                \end{itemize}
+            \end{block}
+        \end{column}
+        \begin{column}{0.48\textwidth}
+            \begin{alertblock}{Regulatorische Anforderung}
+                Erklärbarkeit ist \textbf{keine Option}:
+                \begin{itemize}
+                    \item Kunde hat Recht auf Erklärung
+                    \item Aufsicht muss Modell verstehen
+                    \item Interne Revision prüft
+                    \item MaRisk/BAIT verlangen Dokumentation
+                \end{itemize}
+            \end{alertblock}
+            \vspace{0.2cm}
+            \textit{„Warum wurde mein Konto gesperrt?" muss beantwortbar sein!}
+        \end{column}
+    \end{columns}
+\end{frame}
 
 \begin{frame}
     \frametitle{Fragen für Vor-Ort-PrüferInnen}
@@ -139,14 +567,16 @@
                 \begin{itemize}
                     \item Mit welchen \textbf{Daten} wurde trainiert?
                     \item Wurde auf \textbf{Overfitting} getestet?
-                    \item Welche \textbf{Faktoren} fließen ein?
+                    \item Welche \textbf{Features} fließen ein?
+                    \item Gibt es eine \textbf{Baseline} zum Vergleich?
                 \end{itemize}
             \end{block}
             \vspace{0.2cm}
             \begin{block}{Zur Validierung}
                 \begin{itemize}
                     \item Welche \textbf{Metriken} werden gemessen?
-                    \item Wie oft wird \textbf{überprüft}?
+                    \item Wie oft wird \textbf{re-validiert}?
+                    \item Gibt es \textbf{Out-of-Time}-Tests?
                 \end{itemize}
             \end{block}
         \end{column}
@@ -156,47 +586,83 @@
                     \item Wer ist \textbf{verantwortlich}?
                     \item Ist das Modell \textbf{erklärbar}?
                     \item Wie werden \textbf{Änderungen} dokumentiert?
+                    \item Gibt es ein \textbf{Model Risk Management}?
                 \end{itemize}
             \end{block}
             \vspace{0.2cm}
-            \begin{alertblock}{Red Flags}
+            \begin{block}{Zum Monitoring}
                 \begin{itemize}
-                    \item Keine Dokumentation
-                    \item Nur „Accuracy" als Metrik
-                    \item Kein regelmäßiges Re-Training
+                    \item Wird \textbf{Model Drift} überwacht?
+                    \item Was passiert bei \textbf{Performance-Einbruch}?
+                    \item Gibt es \textbf{Fallback}-Mechanismen?
+                \end{itemize}
+            \end{block}
+        \end{column}
+    \end{columns}
+\end{frame}
+
+\begin{frame}
+    \frametitle{Red Flags bei ML-Implementierungen}
+    \begin{columns}
+        \begin{column}{0.48\textwidth}
+            \begin{alertblock}{Warnsignale}
+                \begin{itemize}
+                    \item Keine klare \textbf{Dokumentation}
+                    \item Test Set wurde für Tuning genutzt
+                    \item Nur \textbf{Accuracy} als Metrik
+                    \item Kein \textbf{Monitoring} in Produktion
+                    \item „Black Box" ohne Erklärbarkeit
+                    \item Keine \textbf{Governance}-Struktur
+                    \item Modell seit Jahren nicht \textbf{re-trainiert}
+                    \item Keine \textbf{Challenger Models}
                 \end{itemize}
             \end{alertblock}
+        \end{column}
+        \begin{column}{0.48\textwidth}
+            \begin{block}{Best Practices}
+                \begin{itemize}
+                    \item Klare \textbf{Model Risk Management} Policy
+                    \item Regelmäßige \textbf{Validierung} (mind. jährlich)
+                    \item \textbf{Challenger Models} zum Vergleich
+                    \item \textbf{Human-in-the-Loop} bei kritischen Entscheidungen
+                    \item Dokumentierte \textbf{Feature-Auswahl}
+                    \item \textbf{Audit Trail} aller Änderungen
+                    \item Definierte \textbf{Schwellenwerte} für Eingriff
+                    \item \textbf{Rollback}-Strategie
+                \end{itemize}
+            \end{block}
         \end{column}
     \end{columns}
 \end{frame}
 
 %===============================================================================
-% FOLIE 6: Key Takeaways
+\section{Zusammenfassung}
 %===============================================================================
 
 \begin{frame}
-    \frametitle{Zusammenfassung}
+    \frametitle{Key Takeaways}
     \begin{enumerate}
         \item \textbf{ML lernt aus Daten} -- keine explizite Programmierung nötig
-        \vspace{0.3cm}
+        \vspace{0.2cm}
         \item \textbf{Überwacht vs. Unüberwacht:} Mit oder ohne Beispiellösungen
-        \vspace{0.3cm}
+        \vspace{0.2cm}
         \item \textbf{Overfitting vermeiden:} Das Modell soll generalisieren können
-        \vspace{0.3cm}
-        \item \textbf{Precision \& Recall:} Wichtiger als reine Trefferquote
-        \vspace{0.3cm}
-        \item \textbf{Governance \& Erklärbarkeit:} Essenziell für regulierte Bereiche
+        \vspace{0.2cm}
+        \item \textbf{Precision \& Recall:} Wichtiger als reine Trefferquote (Accuracy)
+        \vspace{0.2cm}
+        \item \textbf{Gradient Boosting:} State-of-the-Art für Tabellendaten
+        \vspace{0.2cm}
+        \item \textbf{Erklärbarkeit \& Governance:} Essenziell für regulierte Bereiche
     \end{enumerate}
-    \vspace{0.4cm}
+    \vspace{0.3cm}
     \begin{block}{Literaturempfehlung}
-        Géron, A. (2022). \textit{Hands-On Machine Learning}. O'Reilly. \cite{geron2022hands}
+        Géron, A. (2022). \textit{Hands-On Machine Learning with Scikit-Learn, Keras, and TensorFlow}. O'Reilly. \cite{geron2022hands}
     \end{block}
 \end{frame}
 
 \begin{frame}[allowframebreaks]
     \frametitle{Literatur}
-    \bibliographystyle{plain}
-    \bibliography{literature}
+    \printbibliography[heading=none]
 \end{frame}
 
 \end{document}

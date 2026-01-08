@@ -35,7 +35,7 @@ jobs:
           python instance_vs_model.py
           python precision_recall.py
           
-      - name: Compile LaTeX document
+      - name: Compile LaTeX document (full version)
         uses: xu-cheng/latex-action@v3
         with:
           root_file: machine_learning.tex
@@ -43,12 +43,25 @@ jobs:
           latexmk_shell_escape: true
           extra_system_packages: |
             biber
+          args: -pdf -xelatex -bibtex-cond
+
+      - name: Compile LaTeX document (short version)
+        uses: xu-cheng/latex-action@v3
+        with:
+          root_file: machine_learning_short.tex
+          latexmk_use_xelatex: true
+          latexmk_shell_escape: true
+          extra_system_packages: |
+            biber
+          args: -pdf -xelatex -bibtex-cond
             
       - name: Upload PDF artifact
         uses: actions/upload-artifact@v4
         with:
           name: machine-learning-slides
-          path: machine_learning.pdf
+          path: |
+            machine_learning.pdf
+            machine_learning_short.pdf
           retention-days: 30
           
       - name: Create Release
@@ -57,7 +70,9 @@ jobs:
         with:
           tag_name: v${{ github.run_number }}
           name: Slides Release ${{ github.run_number }}
-          files: machine_learning.pdf
+          files: |
+            machine_learning.pdf
+            machine_learning_short.pdf
           generate_release_notes: true
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
