@@ -113,7 +113,7 @@ ax.set_ylabel('Feature 2 (z.B. Auslandstransaktionen)')
 ax.set_xlim(x_min, x_max)
 ax.set_ylim(y_min, y_max)
 ax.set_aspect('equal', adjustable='box')
-ax.legend(loc='upper center', bbox_to_anchor=(0.5, -0.12), ncol=3, fontsize=7, framealpha=0.9)
+ax.legend(loc='upper center', bbox_to_anchor=(0.5, -0.18), ncol=3, fontsize=7, framealpha=0.9)
 ax.grid(True, alpha=0.3)
 
 plt.tight_layout(rect=[0, 0.05, 1, 1])
