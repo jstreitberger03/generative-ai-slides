@@ -30,8 +30,6 @@ jobs:
       - name: Generate plots
         run: |
           cd plots
-          python knn_decision_boundary.py
-          python kmeans_voronoi.py
           python overfitting_visualization.py
           python supervised_vs_unsupervised.py
           python instance_vs_model.py
