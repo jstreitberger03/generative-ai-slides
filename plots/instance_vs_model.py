@@ -19,7 +19,7 @@ X_class1 = np.random.randn(n, 2) + np.array([3, 3])
 X = np.vstack([X_class0, X_class1])
 y = np.array([0]*n + [1]*n)
 
-fig, axes = plt.subplots(1, 2, figsize=(10, 4.5))
+fig, axes = plt.subplots(1, 2, figsize=(10, 3.8))
 
 # Create mesh for decision boundary - use same range for both axes to keep circles round
 data_min = min(X[:, 0].min(), X[:, 1].min()) - 1.5

@@ -19,13 +19,16 @@ fig, axes = plt.subplots(1, 2, figsize=(10, 4))
 # ============ LEFT: Isolation Forest ============
 ax = axes[0]
 
-# Generate normal data (cluster)
+# Generate normal data (cluster) - shifted to positive values for transaction amounts
 n_normal = 150
-X_normal = np.random.randn(n_normal, 2) * 0.8 + np.array([2, 2])
+X_normal = np.random.randn(n_normal, 2) * 0.8 + np.array([3, 2])
 
-# Add some anomalies (outliers)
+# Add some anomalies (outliers) - only positive values for Feature 1 (transaction amount)
 n_anomaly = 15
-X_anomaly = np.random.uniform(low=-1, high=5, size=(n_anomaly, 2))
+X_anomaly = np.column_stack([
+    np.random.uniform(low=0.5, high=6, size=n_anomaly),  # Feature 1: positive only
+    np.random.uniform(low=-0.5, high=5, size=n_anomaly)   # Feature 2: can be lower
+])
 
 X = np.vstack([X_normal, X_anomaly])
 
@@ -33,16 +36,16 @@ X = np.vstack([X_normal, X_anomaly])
 iso_forest = IsolationForest(contamination=0.1, random_state=42)
 y_pred = iso_forest.fit_predict(X)
 
-# Create mesh for decision function
-x_min, x_max = -1.5, 5.5
-y_min, y_max = -1.5, 5.5
+# Create mesh for decision function - Feature 1 starts at 0
+x_min, x_max = 0, 6.5
+y_min, y_max = -0.5, 5.5
 xx, yy = np.meshgrid(np.linspace(x_min, x_max, 200),
                      np.linspace(y_min, y_max, 200))
 Z = iso_forest.decision_function(np.c_[xx.ravel(), yy.ravel()]).reshape(xx.shape)
 
 # Plot decision boundary
 ax.contourf(xx, yy, Z, levels=20, cmap='RdYlGn', alpha=0.5)
-ax.contour(xx, yy, Z, levels=[0], colors='black', linewidths=2, linestyles='--')
+contour = ax.contour(xx, yy, Z, levels=[0], colors='black', linewidths=2, linestyles='--')
 
 # Plot points
 ax.scatter(X[y_pred == 1, 0], X[y_pred == 1, 1], c=GREEN, s=40, alpha=0.7, 
@@ -50,20 +53,20 @@ ax.scatter(X[y_pred == 1, 0], X[y_pred == 1, 1], c=GREEN, s=40, alpha=0.7,
 ax.scatter(X[y_pred == -1, 0], X[y_pred == -1, 1], c=RED, s=80, marker='X',
            label='Anomalie', edgecolors='black', linewidth=1)
 
+# Add boundary to legend
+from matplotlib.lines import Line2D
+boundary_line = Line2D([0], [0], color='black', linewidth=2, linestyle='--', label='Anomalie-Grenze')
+
 ax.set_title('Isolation Forest\nFindet Ausreißer automatisch', fontsize=11, fontweight='bold', color=FMA_ORANGE)
 ax.set_xlabel('Feature 1 (z.B. Transaktionshöhe)')
 ax.set_ylabel('Feature 2 (z.B. Häufigkeit)')
-ax.legend(loc='upper right', fontsize=9)
+ax.legend(handles=[ax.collections[1], ax.collections[2], boundary_line], 
+          labels=['Normal', 'Anomalie', 'Anomalie-Grenze'],
+          loc='upper right', fontsize=8, framealpha=0.9)
 ax.set_xlim(x_min, x_max)
 ax.set_ylim(y_min, y_max)
 ax.set_aspect('equal', adjustable='box')
 ax.grid(True, alpha=0.3)
-
-# Add annotation - find a point on the boundary
-ax.annotate('Anomalie-\nGrenze', xy=(0.5, 3.8), xytext=(4.5, 4.8),
-            fontsize=9, ha='center', fontweight='bold',
-            arrowprops=dict(arrowstyle='->', color='black', lw=1.5),
-            bbox=dict(boxstyle='round,pad=0.3', facecolor='white', edgecolor='gray', alpha=0.9))
 
 # ============ RIGHT: k-Means Clustering ============
 ax = axes[1]
@@ -110,10 +113,10 @@ ax.set_ylabel('Feature 2 (z.B. Auslandstransaktionen)')
 ax.set_xlim(x_min, x_max)
 ax.set_ylim(y_min, y_max)
 ax.set_aspect('equal', adjustable='box')
-ax.legend(loc='upper left', fontsize=8, framealpha=0.9)
+ax.legend(loc='upper center', bbox_to_anchor=(0.5, -0.12), ncol=3, fontsize=7, framealpha=0.9)
 ax.grid(True, alpha=0.3)
 
-plt.tight_layout()
+plt.tight_layout(rect=[0, 0.05, 1, 1])
 plt.savefig('anomaly_clustering.pdf', bbox_inches='tight', dpi=150)
 plt.savefig('anomaly_clustering.png', bbox_inches='tight', dpi=150)
 plt.close()
