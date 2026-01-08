@@ -45,6 +45,20 @@ new_point = np.array([[1.5, 2]])
 ax.scatter(new_point[0, 0], new_point[0, 1], c='#9B59B6', s=150, marker='*', 
            edgecolors='black', linewidth=1.5, label='Neu', zorder=10)
 
+# Draw circle around new point showing k-NN neighborhood
+# Find distance to k-th nearest neighbor
+distances, indices = knn.kneighbors(new_point)
+radius = distances[0, -1] * 1.05  # Slightly larger than k-th neighbor distance
+circle = plt.Circle((new_point[0, 0], new_point[0, 1]), radius, 
+                     fill=False, color='#9B59B6', linewidth=2, linestyle='--', 
+                     label='k=5 Nachbarn')
+ax.add_patch(circle)
+
+# Highlight the k nearest neighbors
+for idx in indices[0]:
+    ax.scatter(X[idx, 0], X[idx, 1], s=100, facecolors='none', 
+               edgecolors='#9B59B6', linewidth=2, zorder=5)
+
 ax.set_title('Instanzbasiert (k-NN)\nSpeichert alle Trainingsdaten', fontsize=11, fontweight='bold', color=FMA_ORANGE)
 ax.set_xlabel('Feature 1')
 ax.set_ylabel('Feature 2')

@@ -1,64 +1,128 @@
 """
-Visualization of Precision-Recall Trade-off
+Visualization of Precision-Recall Trade-off - Intuitive Version
 """
 import numpy as np
 import matplotlib.pyplot as plt
+from matplotlib.patches import FancyBboxPatch, Circle
+import matplotlib.patches as mpatches
 
 # FMA Colors
 FMA_ORANGE = '#EC6600'
 FMA_BLUE = '#144F76'
+GREEN = '#27AE60'
+RED = '#E74C3C'
+YELLOW = '#F1C40F'
+GRAY = '#95A5A6'
 
-fig, axes = plt.subplots(1, 2, figsize=(10, 4))
+fig, axes = plt.subplots(1, 2, figsize=(11, 4.5))
 
-# Left: Confusion Matrix visualization
+# ============ LEFT: Visual explanation of Precision & Recall ============
 ax = axes[0]
-matrix = np.array([[85, 15], [5, 895]])  # TP, FN, FP, TN for AML scenario
-labels = [['TP\n(Erkannt)\n85', 'FN\n(Übersehen)\n15'],
-          ['FP\n(Fehlalarm)\n5', 'TN\n(Korrekt neg.)\n895']]
-colors = [['#27AE60', FMA_ORANGE], ['#F39C12', FMA_BLUE]]
+ax.set_xlim(0, 10)
+ax.set_ylim(0, 8)
+ax.set_aspect('equal')
+ax.axis('off')
 
-for i in range(2):
-    for j in range(2):
-        ax.add_patch(plt.Rectangle((j, 1-i), 1, 1, facecolor=colors[i][j], alpha=0.6))
-        ax.text(j+0.5, 1.5-i, labels[i][j], ha='center', va='center', fontsize=10, fontweight='bold')
+# Title
+ax.text(5, 7.5, 'Was bedeutet Precision & Recall?', ha='center', fontsize=13, 
+        fontweight='bold', color=FMA_ORANGE)
 
-ax.set_xlim(0, 2)
-ax.set_ylim(0, 2)
-ax.set_xticks([0.5, 1.5])
-ax.set_xticklabels(['Pred: Positiv', 'Pred: Negativ'])
-ax.set_yticks([0.5, 1.5])
-ax.set_yticklabels(['Tatsächlich: Negativ', 'Tatsächlich: Positiv'])
-ax.set_title('Konfusionsmatrix (AML-Beispiel)', fontsize=12, fontweight='bold', color=FMA_ORANGE)
+# Legend for icons
+ax.add_patch(Circle((0.5, 6.8), 0.2, color=RED, ec='black', lw=1))
+ax.text(0.9, 6.8, '= Echter Geldwäschefall', va='center', fontsize=9)
+ax.add_patch(Circle((5.5, 6.8), 0.2, color=GRAY, ec='black', lw=1))
+ax.text(5.9, 6.8, '= Kein Geldwäschefall', va='center', fontsize=9)
 
-# Add metrics
-precision = 85 / (85 + 5)
-recall = 85 / (85 + 15)
-f1 = 2 * precision * recall / (precision + recall)
-ax.text(1, -0.3, f'Precision: {precision:.1%}  |  Recall: {recall:.1%}  |  F1: {f1:.2f}', 
-        ha='center', fontsize=10, style='italic')
+# --- PRECISION Section ---
+ax.text(2.5, 5.8, 'PRECISION', ha='center', fontsize=11, fontweight='bold', color=FMA_BLUE)
+ax.text(2.5, 5.3, '„Von allen Alarmen..."', ha='center', fontsize=9, style='italic')
 
-# Right: Precision-Recall curve
+# Draw "Vom Modell alarmiert" box
+alarm_box = FancyBboxPatch((0.3, 2.5), 4.4, 2.5, boxstyle="round,pad=0.1", 
+                            facecolor='#E8F4FD', edgecolor=FMA_BLUE, linewidth=2)
+ax.add_patch(alarm_box)
+ax.text(2.5, 4.7, 'Vom Modell alarmiert', ha='center', fontsize=8, color=FMA_BLUE)
+
+# Icons inside alarm box: 3 real cases, 2 false alarms
+positions_prec = [(0.8, 3.5), (1.6, 3.5), (2.4, 3.5), (3.2, 3.5), (4.0, 3.5)]
+colors_prec = [RED, RED, RED, GRAY, GRAY]  # 3 echt, 2 Fehlalarm
+for pos, col in zip(positions_prec, colors_prec):
+    ax.add_patch(Circle(pos, 0.3, color=col, ec='black', lw=1.5))
+
+# Result text
+ax.text(2.5, 2.0, '3 von 5 = 60%', ha='center', fontsize=10, fontweight='bold', color=FMA_BLUE)
+ax.text(2.5, 1.5, '„Wie viele Alarme sind echt?"', ha='center', fontsize=8, style='italic')
+
+# --- RECALL Section ---
+ax.text(7.5, 5.8, 'RECALL', ha='center', fontsize=11, fontweight='bold', color=FMA_ORANGE)
+ax.text(7.5, 5.3, '„Von allen echten Fällen..."', ha='center', fontsize=9, style='italic')
+
+# Draw "Alle echten Fälle" box
+real_box = FancyBboxPatch((5.3, 2.5), 4.4, 2.5, boxstyle="round,pad=0.1", 
+                           facecolor='#FDEDEC', edgecolor=FMA_ORANGE, linewidth=2)
+ax.add_patch(real_box)
+ax.text(7.5, 4.7, 'Alle echten Geldwäschefälle', ha='center', fontsize=8, color=FMA_ORANGE)
+
+# Icons: 4 real cases total, 3 found (green check), 1 missed (X)
+positions_rec = [(5.8, 3.5), (6.6, 3.5), (7.4, 3.5), (8.2, 3.5)]
+for i, pos in enumerate(positions_rec):
+    ax.add_patch(Circle(pos, 0.3, color=RED, ec='black', lw=1.5))
+    if i < 3:  # Found
+        ax.text(pos[0], pos[1], '✓', ha='center', va='center', fontsize=12, 
+                color='white', fontweight='bold')
+    else:  # Missed
+        ax.text(pos[0], pos[1], '✗', ha='center', va='center', fontsize=12, 
+                color='white', fontweight='bold')
+
+# Result text
+ax.text(7.5, 2.0, '3 von 4 = 75%', ha='center', fontsize=10, fontweight='bold', color=FMA_ORANGE)
+ax.text(7.5, 1.5, '„Wie viele wurden gefunden?"', ha='center', fontsize=8, style='italic')
+
+# Bottom summary
+ax.text(5, 0.5, 'F1 = Balance: Nur gut, wenn BEIDE Werte hoch sind!', 
+        ha='center', fontsize=10, fontweight='bold', 
+        bbox=dict(boxstyle='round', facecolor='#FEF9E7', edgecolor=YELLOW, lw=2))
+
+# ============ RIGHT: Trade-off visualization ============
 ax = axes[1]
-thresholds = np.linspace(0, 1, 100)
-# Simulated precision-recall curve
-recall_vals = 1 - thresholds**0.5
-precision_vals = 0.3 + 0.65 * thresholds**0.8
 
-ax.plot(recall_vals, precision_vals, color=FMA_ORANGE, linewidth=2.5, label='Modell')
-ax.fill_between(recall_vals, precision_vals, alpha=0.2, color=FMA_ORANGE)
+# Create bar comparison
+categories = ['Strenger\nSchwellenwert', 'Ausgewogen', 'Lockerer\nSchwellenwert']
+precision_vals = [0.90, 0.75, 0.40]
+recall_vals = [0.50, 0.75, 0.95]
 
-# Mark different operating points
-ax.scatter([0.85], [0.94], c='#27AE60', s=100, zorder=5, label='Hohe Precision\n(wenig FP)')
-ax.scatter([0.95], [0.45], c=FMA_ORANGE, s=100, zorder=5, label='Hoher Recall\n(wenig FN)')
-ax.scatter([0.90], [0.75], c=FMA_BLUE, s=100, zorder=5, label='Balanced')
+x = np.arange(len(categories))
+width = 0.35
 
-ax.set_xlabel('Recall (Sensitivität)', fontsize=11)
-ax.set_ylabel('Precision (Präzision)', fontsize=11)
-ax.set_title('Precision-Recall Trade-off', fontsize=12, fontweight='bold', color=FMA_ORANGE)
-ax.set_xlim(0, 1)
-ax.set_ylim(0, 1)
-ax.legend(loc='lower left', fontsize=8)
-ax.grid(True, alpha=0.3)
+bars1 = ax.bar(x - width/2, precision_vals, width, label='Precision', color=FMA_BLUE, alpha=0.8)
+bars2 = ax.bar(x + width/2, recall_vals, width, label='Recall', color=FMA_ORANGE, alpha=0.8)
+
+# Add value labels on bars
+for bar in bars1:
+    height = bar.get_height()
+    ax.annotate(f'{height:.0%}', xy=(bar.get_x() + bar.get_width() / 2, height),
+                xytext=(0, 3), textcoords="offset points", ha='center', va='bottom', fontsize=9)
+for bar in bars2:
+    height = bar.get_height()
+    ax.annotate(f'{height:.0%}', xy=(bar.get_x() + bar.get_width() / 2, height),
+                xytext=(0, 3), textcoords="offset points", ha='center', va='bottom', fontsize=9)
+
+ax.set_ylabel('Wert', fontsize=11)
+ax.set_title('Der Trade-off: Man kann nicht beides maximieren!', fontsize=12, 
+             fontweight='bold', color=FMA_ORANGE)
+ax.set_xticks(x)
+ax.set_xticklabels(categories, fontsize=9)
+ax.set_ylim(0, 1.15)
+ax.legend(loc='upper center', ncol=2, fontsize=9)
+ax.grid(True, alpha=0.3, axis='y')
+
+# Add annotations
+ax.annotate('Wenig Fehlalarme,\naber viel übersehen', xy=(0, 0.5), xytext=(0, 0.25),
+            ha='center', fontsize=8, style='italic', color=GRAY)
+ax.annotate('Kaum übersehen,\naber viele Fehlalarme', xy=(2, 0.4), xytext=(2, 0.15),
+            ha='center', fontsize=8, style='italic', color=GRAY)
+ax.annotate('✓ Beste\nBalance', xy=(1, 0.75), xytext=(1, 0.55),
+            ha='center', fontsize=9, fontweight='bold', color=GREEN)
 
 plt.tight_layout()
 plt.savefig('precision_recall.pdf', bbox_inches='tight', dpi=150)

@@ -44,7 +44,7 @@
         \begin{column}{0.42\textwidth}
             \begin{exampleblock}{Beispiel: Geldwäsche}
                 \textbf{Regelbasiert:}\\
-                „Melde alle Transaktionen über 10.000 \texteuro"
+                \glqq Melde Transaktionen über 10.000 \texteuro\grqq
                 \vspace{0.2cm}
                 
                 \textbf{ML-basiert:}\\
@@ -140,7 +140,7 @@
         \includegraphics[width=0.9\linewidth]{plots/overfitting_visualization.pdf}
     \end{center}
     \begin{alertblock}{Juristische Analogie}
-        \textbf{Overfitting} = Das Modell „lernt auswendig" statt das Prinzip zu verstehen.
+        \textbf{Overfitting} = Das Modell \glqq lernt auswendig\grqq{} statt das Prinzip zu verstehen.
     \end{alertblock}
 \end{frame}
 
@@ -313,9 +313,9 @@
             \vspace{0.2cm}
             \begin{exampleblock}{Im AML-Kontext}
                 \begin{itemize}
-                    \item Baum 1: „Hohe Beträge sind verdächtig"
-                    \item Baum 2: „...aber nicht bei bekannten Händlern"
-                    \item Baum 3: „...außer bei neuen Kunden"
+                    \item Baum 1: \glqq Hohe Beträge sind verdächtig\grqq
+                    \item Baum 2: \glqq ...aber nicht bei bekannten Händlern\grqq
+                    \item Baum 3: \glqq ...außer bei neuen Kunden\grqq
                 \end{itemize}
             \end{exampleblock}
         \end{column}
@@ -381,7 +381,7 @@
         \begin{column}{0.42\textwidth}
             \begin{alertblock}{Vorsicht}
                 \begin{itemize}
-                    \item Oft „Black Box"
+                    \item Oft \glqq Black Box\grqq
                     \item Braucht viele Daten
                     \item Bei Tabellendaten meist nicht besser als Gradient Boosting
                 \end{itemize}
@@ -408,7 +408,7 @@
             \textbf{Das Dilemma bei seltenen Ereignissen:}
             \begin{itemize}
                 \item Geldwäsche: $<$1\% aller Transaktionen
-                \item Ein Modell, das \textit{immer} „unbedenklich" sagt, hat 99\% Trefferquote!
+                \item Ein Modell, das \textit{immer} \glqq unbedenklich\grqq{} sagt, hat 99\% Trefferquote!
             \end{itemize}
             \vspace{0.3cm}
             \textbf{Bessere Maßstäbe:}
@@ -440,9 +440,9 @@
     \end{center}
     \vspace{-0.2cm}
     \[
-        \text{Precision} = \frac{\textup{TP}}{\textup{TP} + \textup{FP}} \qquad
-        \text{Recall} = \frac{\textup{TP}}{\textup{TP} + \textup{FN}} \qquad
-        F_1 = 2 \cdot \frac{P \cdot R}{P + R}
+        \textup{Precision} = \frac{\textup{TP}}{\textup{TP} + \textup{FP}} \qquad
+        \textup{Recall} = \frac{\textup{TP}}{\textup{TP} + \textup{FN}} \qquad
+        F_1 = 2 \, \frac{\textup{Precision} \, \textup{Recall}}{\textup{Precision} + \textup{Recall}}
     \]
 \end{frame}
 
@@ -591,7 +591,7 @@
                 \end{itemize}
             \end{alertblock}
             \vspace{0.2cm}
-            \textit{„Warum wurde mein Konto gesperrt?" muss beantwortbar sein!}
+            \textit{\glqq Warum wurde mein Konto gesperrt?\grqq{} muss beantwortbar sein!}
         \end{column}
     \end{columns}
 \end{frame}
@@ -648,7 +648,7 @@
                     \item Test Set wurde für Tuning genutzt
                     \item Nur \textbf{Accuracy} als Metrik
                     \item Kein \textbf{Monitoring} in Produktion
-                    \item „Black Box" ohne Erklärbarkeit
+                    \item \glqq Black Box\grqq{} ohne Erklärbarkeit
                     \item Keine \textbf{Governance}-Struktur
                     \item Modell seit Jahren nicht \textbf{re-trainiert}
                     \item Keine \textbf{Challenger Models}
@@ -779,7 +779,7 @@
                 \end{itemize}
             \end{alertblock}
             \vspace{0.2cm}
-            \textit{„Human-in-the-Loop" bleibt essenziell -- GenAI unterstützt, entscheidet aber nicht!}
+            \textit{\glqq Human-in-the-Loop\grqq{} bleibt essenziell -- GenAI unterstützt, entscheidet aber nicht!}
         \end{column}
     \end{columns}
 \end{frame}

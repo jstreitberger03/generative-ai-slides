@@ -38,7 +38,7 @@
         \begin{column}{0.42\textwidth}
             \begin{exampleblock}{Beispiel: Geldwäsche}
                 \textbf{Regelbasiert:}\\
-                „Melde alle Transaktionen über 10.000 \texteuro"
+                \glqq Melde Transaktionen über 10.000 \texteuro\grqq
                 \vspace{0.2cm}
                 
                 \textbf{Machine Learning-basiert:}\\
@@ -60,7 +60,7 @@
                 \begin{itemize}
                     \item Computer lernt aus \textbf{Beispielen mit Lösung}
                     \item Wie ein Student mit Musterlösungen
-                    \item \textit{Bsp: „Diese 1000 Fälle waren Betrug, diese 9000 nicht"}
+                    \item \textit{Bsp: \glqq Diese 1000 Fälle waren Betrug, diese 9000 nicht\grqq}
                 \end{itemize}
                 \vspace{0.2cm}
                 \textbf{Anwendung:} Alert-Klassifikation, Risiko-Scoring
@@ -71,7 +71,7 @@
                 \begin{itemize}
                     \item Computer findet \textbf{selbst Muster}
                     \item Wie ein Detektiv ohne Hinweise
-                    \item \textit{Bsp: „Gruppiere ähnliche Kunden"}
+                    \item \textit{Bsp: \glqq Gruppiere ähnliche Kunden\grqq}
                 \end{itemize}
                 \vspace{0.2cm}
                 \textbf{Anwendung:} Kundensegmentierung, Anomalieerkennung
@@ -87,7 +87,7 @@
 \begin{frame}
     \frametitle{Zwei Ansätze: Instanzbasiert vs. Modellbasiert}
     \begin{center}
-        \includegraphics[width=0.85\linewidth]{plots/instance_vs_model.pdf}
+        \includegraphics[width=0.75\linewidth]{plots/instance_vs_model.pdf}
     \end{center}
     \begin{columns}
         \begin{column}{0.48\textwidth}
@@ -112,11 +112,37 @@
 \end{frame}
 
 %===============================================================================
-% FOLIE 2c: Wichtige Algorithmen
+% FOLIE 2c: Wichtige Algorithmen (Teil 1)
 %===============================================================================
 
 \begin{frame}
-    \frametitle{Wichtige Algorithmen im Überblick}
+    \frametitle{Wichtige Algorithmen: Klassifikation}
+    \begin{center}
+        \includegraphics[width=0.72\linewidth]{plots/algorithm_comparison.pdf}
+    \end{center}
+    \vspace{-0.2cm}
+    \textit{\small Use Case: Alert-Scoring, SAR-Priorisierung, Risiko-Klassifikation}
+\end{frame}
+
+%===============================================================================
+% FOLIE 2d: Wichtige Algorithmen (Teil 2)
+%===============================================================================
+
+\begin{frame}
+    \frametitle{Wichtige Algorithmen: Anomalieerkennung \& Clustering}
+    \begin{center}
+        \includegraphics[width=0.82\linewidth]{plots/anomaly_clustering.pdf}
+    \end{center}
+    \vspace{-0.1cm}
+    \begin{alertblock}{Praxis-Tipp}
+        Für \textbf{tabellarische Daten} (Transaktionen): Gradient Boosting. Für \textbf{Text}: NLP/LLMs.
+    \end{alertblock}
+\end{frame}
+
+% Placeholder to preserve structure
+\iffalse
+\begin{frame}
+    \frametitle{Wichtige Algorithmen im Überblick -- OLD}
     \begin{columns}[t]
         \begin{column}{0.32\textwidth}
             \begin{block}{\centering Klassifikation}
@@ -161,6 +187,7 @@
         \end{column}
     \end{columns}
 \end{frame}
+\fi
 
 %===============================================================================
 % FOLIE 3: Das Problem Overfitting
@@ -172,7 +199,7 @@
         \includegraphics[width=0.85\linewidth]{plots/overfitting_visualization.pdf}
     \end{center}
     \begin{alertblock}{Juristische Analogie}
-        \textbf{Overfitting} = Das Modell „lernt den Fall auswendig" statt das Prinzip zu verstehen.\\
+        \textbf{Overfitting} = Das Modell \glqq lernt den Fall auswendig\grqq{} statt das Prinzip zu verstehen.\\
         Wie ein Jurist, der nur die Urteile kennt, aber nicht die dahinterliegenden Rechtsgrundsätze.
     \end{alertblock}
 \end{frame}
@@ -184,25 +211,25 @@
 \begin{frame}
     \frametitle{Wie gut ist ein Modell? -- Precision, Recall \& F1}
     \begin{columns}
-        \begin{column}{0.58\textwidth}
+        \begin{column}{0.65\textwidth}
             \textbf{Das Dilemma bei seltenen Ereignissen:}
             \begin{itemize}
                 \item Geldwäsche: $<$1\% aller Transaktionen
-                \item Ein Modell, das \textit{immer} „unbedenklich" sagt, hat 99\% Trefferquote!
+                \item Ein Modell, das \textit{immer} \glqq unbedenklich\grqq{} sagt, hat 99\% Trefferquote!
             \end{itemize}
             \vspace{0.3cm}
             \textbf{Bessere Maßstäbe:}
             \begin{itemize}
                 \item \textbf{Precision:} Wie viele Alarme sind echte Treffer?
                 \item \textbf{Recall:} Wie viele echte Fälle wurden gefunden?
-                \item \textbf{F1-Score:} Harmonisches Mittel aus beiden
+                \item \textbf{F1-Score:} Balance zwischen beiden -- nur gut, wenn \textit{beide} Werte hoch sind
             \end{itemize}
-            \vspace{0.2cm}
-            \[
-                F_1 = 2 \, \frac{\textup{Precision} \cdot \textup{Recall}}{\textup{Precision} + \textup{Recall}}
-            \]
+            \vspace{0.3cm}
+            \begin{exampleblock}{Analogie: Suchmaschine}
+                \textbf{Precision} = Relevante Ergebnisse unter den Treffern\\                \textbf{Recall} = Wie viel Relevantes wurde überhaupt gefunden?
+            \end{exampleblock}
         \end{column}
-        \begin{column}{0.38\textwidth}
+        \begin{column}{0.30\textwidth}
             \begin{alertblock}{Abwägung}
                 \textbf{Hoher Recall:}\\
                 Weniger übersehen\\
@@ -252,7 +279,7 @@
             \begin{alertblock}{Red Flags}
                 \begin{itemize}
                     \item Keine Dokumentation
-                    \item Nur „Accuracy" als Metrik
+                    \item Nur \glqq Accuracy\grqq{} als Metrik
                     \item Kein regelmäßiges Re-Training
                 \end{itemize}
             \end{alertblock}
@@ -282,7 +309,28 @@
 \end{frame}
 
 \begin{frame}[allowframebreaks]
-    \frametitle{Literatur}
+    \frametitle{Literatur \& Weiterführende Ressourcen}
+    \begin{columns}[t]
+        \begin{column}{0.48\textwidth}
+            \begin{block}{Einführung}
+                \begin{itemize}
+                    \item \textbf{Géron} (2022): Hands-On ML -- Praxisorientiert
+                    \item \textbf{Bishop} (2006): Pattern Recognition -- Klassiker
+                    \item \textbf{Murphy} (2012): ML Probabilistic -- Tiefgehend
+                \end{itemize}
+            \end{block}
+        \end{column}
+        \begin{column}{0.48\textwidth}
+            \begin{block}{Spezialthemen}
+                \begin{itemize}
+                    \item \textbf{Breiman} (2001): Random Forests
+                    \item \textbf{Chen \& Guestrin} (2016): XGBoost
+                    \item \textbf{Vaswani et al.} (2017): Attention/Transformers
+                \end{itemize}
+            \end{block}
+        \end{column}
+    \end{columns}
+    \vspace{0.3cm}
     \printbibliography[heading=none]
 \end{frame}
 
